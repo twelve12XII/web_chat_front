@@ -3,6 +3,7 @@ import './Login.scss'
 import {Button} from "antd";
 import MyRoute from "./Chat/interfaces/MyRoute";
 import {Link, Route, useNavigate} from "react-router-dom";
+import {url} from "./constants";
 
 function Login() {
     const [name, setName] = useState('');
@@ -17,15 +18,15 @@ function Login() {
     function getMessage()
     {
         const fetchData = () => {
-            fetch('http://olegbigdick:12975/new_user', {
-                method: 'GET',
+            fetch(url + '/new_user', {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8'
                 },
                 // mode: 'no-cors',
-                // body: JSON.stringify({
-                //     "userName": name
-                // })
+                body: JSON.stringify({
+                    "userName": name
+                }),
             }).then(
                 response => {
                     if (response.ok) {

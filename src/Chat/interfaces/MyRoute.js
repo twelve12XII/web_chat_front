@@ -20,7 +20,7 @@ export default function MyRoute(){
     //     setState(state)
     // }
     //     useEffect(() => {
-    //         fetch('http://25.62.253.8:12975/new_user', {
+    //         fetch(utl + '/new_user', {
     //             method: 'POST',
     //             headers: {
     //                 'Content-Type': 'application/json;charset=utf-8'

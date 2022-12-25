@@ -3,6 +3,7 @@ import {useEffect, useRef, useState} from "react";
 import {MoreOutlined} from "@ant-design/icons";
 import "./ChatRoom.scss"
 import ChatMessage from "./ChatMessage";
+import {url} from "../../constants";
 
 interface Props {
     userName: any;
@@ -51,7 +52,7 @@ export default function ChatRoom(props: Props) {
 
     function fetchMessage(message)
     {
-        fetch('http://25.62.253.8:12975/send', {
+        fetch(url + '/send', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',

@@ -5,6 +5,7 @@ import MenuContent from './components/MenuContent'
 import {useLocation} from "react-router-dom";
 import ChatRoom from "./interfaces/ChatRoom";
 import {Button} from "antd";
+import {url} from "../constants";
 
 // interface Props {
 //     name: any;
@@ -38,7 +39,7 @@ function Chats() {
         setSelectedChat(chat);
     };
     useEffect( () => {
-            fetch('http://25.62.253.8:12975/user_chats', {
+            fetch(url + '/user_chats', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8',
@@ -66,7 +67,7 @@ function Chats() {
     , []);
     const [messages, setMessages] = useState([['senderName', 'TestName'],['messageText', 'ee'], ['sendingTime', '2022-12-18T13:02:11.171478']]);
     function getMessages(){
-        fetch('http://25.62.253.8:12975/messages', {
+        fetch(url + '/messages', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',

@@ -3,6 +3,7 @@ import {ArrowLeftOutlined, ArrowRightOutlined} from "@ant-design/icons";
 import {Button, Input, Modal} from "antd";
 import {useState} from "react";
 import Login from "../../Login";
+import {url} from "../../constants";
 interface Props {
     currentUserId: any;
     creatingGroup: boolean;
@@ -37,7 +38,7 @@ export default function CreateConversation(props: Props) {
         setGroupName(event.target.value);
     };
     const fetchGroupData = () => {
-        fetch('http://25.62.253.8:12975/create_chat', {
+        fetch(url + '/create_chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',

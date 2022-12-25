@@ -4,6 +4,7 @@ import {useNavigate} from "react-router-dom";
 import {render} from "@testing-library/react";
 import {Button, Input} from "antd";
 import './SignUp.scss'
+import {url} from "./constants";
 
 function SignUp() {
     let navigate = useNavigate();
@@ -12,7 +13,7 @@ function SignUp() {
     const [password, setPassword] = useState('');
     function signUp(){
         const fetchData = () => {
-            fetch('http://25.62.253.8:12975/sign_up',{
+            fetch(url + '/sign_up',{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8',
