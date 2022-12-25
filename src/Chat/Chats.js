@@ -1,23 +1,16 @@
-import React, {useState, useEffect} from 'react'
-import Login from '../Login'
+import React, {useEffect, useState} from 'react'
 import './Chats.scss'
 import MenuContent from './components/MenuContent'
-import {useLocation} from "react-router-dom";
 import ChatRoom from "./interfaces/ChatRoom";
-import {Button} from "antd";
-import {url} from "../constants";
+import {postRequest} from "../constants";
 
 // interface Props {
 //     name: any;
 //     userId: any
 // }
 
+
 function Chats() {
-    const {state} = useLocation();
-    const {
-        name,
-        userId
-    } = state;
     const [selectedChat, setSelectedChat] = useState('');
     const [openChat, setOpenChat] = useState(false);
     const [conversations, setConversations] = useState();
@@ -35,47 +28,32 @@ function Chats() {
     //     }
     // }, [conversations]);
     const handleSelectChat = (chat: any) => {
-        getMessages();
         setSelectedChat(chat);
+        getMessages(chat);
     };
-    useEffect( () => {
-            fetch(url + '/user_chats', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json;charset=utf-8',
-                    // 'Authorization': 'Basic QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBOlBBU1NXT1JE'
-                },
-                body: JSON.stringify({
-                    "userId": userId
-                })
-            }).then(
-                response => {
-                    if(response.ok){
-                        response.json().then(res => {
-                            setConversations(res)
-                            console.log(res)
-                        })
-                    }
-                    else {
-                        console.log("exception" + response.status);
-                    }
-                })
-                .catch(function(error) {                        // catch
+    useEffect(() => {
+        postRequest('/user_chats').then(
+            response => {
+                if (response.ok) {
+                    response.json().then(res => {
+                        setConversations(res)
+                        console.log(res)
+                    })
+                } else {
+                    console.log("exception" + response.status);
+                }
+            })
+            .catch(function (error) {                        // catch
                 console.log('Request failed', error);
             })
-        }
-    , []);
-    const [messages, setMessages] = useState([['senderName', 'TestName'],['messageText', 'ee'], ['sendingTime', '2022-12-18T13:02:11.171478']]);
-    function getMessages(){
-        fetch(url + '/messages', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8',
-                // 'Authorization': 'Basic QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBOlBBU1NXT1JE'
-            },
-            body: JSON.stringify({
-                "chatId": selectedChat.chatId
-            })
+    }, []);
+    const [messages, setMessages] = useState([['senderName', 'TestName'], ['messageText', 'ee'], ['sendingTime', '2022-12-18T13:02:11.171478']]);
+
+    function getMessages(chat: any = null) {
+        if (chat == null)
+            chat = selectedChat
+        postRequest('/messages', {
+            'chatId': chat.chatId
         }).then(
             response => {
                 if (response.ok) {
@@ -88,47 +66,45 @@ function Chats() {
                 }
             })
     }
+
     return (
         <div className="wrapper">
-                <div className="app-container">
-                    <div className="app-container__menu">
-                        <MenuContent
-                            currentUserId={userId}
-                            user={name}
-                            conversations={conversations}
-                            handleSelectChat={handleSelectChat}
-                        />
-                    </div>
-                    <div className="app-container__content">
-                        {selectedChat ?(
-                            <>
-                                <ChatRoom
-                                    messages={messages}
-                                    userName={name}
-                                    selectedChat={selectedChat}
-                                    openChat={openChat}
-                                    // contacts={contacts}
-                                    handleSelectChat={handleSelectChat}
-                                    userId={userId}
-                                />
-                            </>
-                        ) : (
-                            <div
-                                style={{
-                                    height: "100%",
-                                    width: "100%",
-                                    display: "flex",
-                                    padding: "32px 20% 32px 32px",
-                                    alignItems: "center",
-                                    fontSize: "1rem",
-                                    fontWeight: 500,
-                                }}
-                            >
-                                Pick an existing chat or create a new one.
-                            </div>
-                        )}
-                    </div>
+            <div className="app-container">
+                <div className="app-container__menu">
+                    <MenuContent
+                        conversations={conversations}
+                        handleSelectChat={handleSelectChat}
+                    />
                 </div>
+                <div className="app-container__content">
+                    {selectedChat ? (
+                        <>
+                            <ChatRoom
+                                messages={messages}
+                                selectedChat={selectedChat}
+                                openChat={openChat}
+                                // contacts={contacts}
+                                handleSelectChat={handleSelectChat}
+                                updateMessages={getMessages}
+                            />
+                        </>
+                    ) : (
+                        <div
+                            style={{
+                                height: "100%",
+                                width: "100%",
+                                display: "flex",
+                                padding: "32px 20% 32px 32px",
+                                alignItems: "center",
+                                fontSize: "1rem",
+                                fontWeight: 500,
+                            }}
+                        >
+                            Pick an existing chat or create a new one.
+                        </div>
+                    )}
+                </div>
+            </div>
 
         </div>
     );

@@ -1,20 +1,16 @@
-import { Button, Tabs, Dropdown, Menu } from "antd";
-import { MoreOutlined } from "@ant-design/icons";
+import {Button, Menu} from "antd";
 import './MenuContent.scss'
 import ConversationsTab from './ConversationsTab'
 import {useState} from "react";
+import {getUsername} from "../../Auth";
 
 interface Props {
-    currentUserId: any;
-    user: any;
     conversations: any;
     handleSelectChat: (chat: any) => void;
 }
 
 export default function MenuContent(props: Props) {
     const {
-        currentUserId,
-        user,
         conversations,
         handleSelectChat,
     } = props;
@@ -45,7 +41,7 @@ export default function MenuContent(props: Props) {
             <header>
                 <div style={{ display: "flex", alignItems: "center" }}>
                     <Button
-                        onClick={() => console.log(user)}
+                        onClick={() => console.log(getUsername())}
                         shape="circle"
                         style={{
                             height: "40px",
@@ -56,7 +52,7 @@ export default function MenuContent(props: Props) {
                     >
                     </Button>
                     <span style={{ marginLeft: "12px", fontWeight: 500 }}>
-                {user}
+                {getUsername()}
               </span>
                 </div>
 
@@ -70,7 +66,6 @@ export default function MenuContent(props: Props) {
                 {/*<Tabs defaultActiveKey="1" centered>*/}
                 {/*    <Tabs.TabPane tab="Conversations" key="1">*/}
                         <ConversationsTab
-                            currentUserId={currentUserId}
                             conversations={conversations}
                             handleSelectChat={handleSelectChat}
                         />

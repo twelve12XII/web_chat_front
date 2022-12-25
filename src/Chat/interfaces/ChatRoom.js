@@ -1,33 +1,31 @@
-import {Menu, Input, Button, Dropdown, Modal} from "antd";
+import {Button, Input, Menu, Modal} from "antd";
 import {useEffect, useRef, useState} from "react";
 import {MoreOutlined} from "@ant-design/icons";
 import "./ChatRoom.scss"
 import ChatMessage from "./ChatMessage";
-import {url} from "../../constants";
+import {postRequest} from "../../constants";
 
 interface Props {
-    userName: any;
-    userId: any;
     selectedChat: any;
     // contacts: any;
     messages: any;
     handleSelectChat: (chat: any) => void;
+    updateMessages: () => void;
 }
 
 export default function ChatRoom(props: Props) {
     const [messageText, setMessageText] = useState("");
-    const { selectedChat, handleSelectChat, /*contacts,*/ userName, userId, messages } = props;
+    const {selectedChat, handleSelectChat, /*contacts,*/ messages} = props;
     const [groupName, setGroupName] = useState("");
     const [loading, setLoading] = useState(false);
 
     const dummy = useRef(null);
 
     useEffect(() => {
-            if (dummy.current) {
-                dummy.current.scrollIntoView({behavior: "smooth"});
-            }
-            }, [messages]);
-
+        if (dummy.current) {
+            dummy.current.scrollIntoView({behavior: "smooth"});
+        }
+    }, [messages]);
 
 
     const handleMessageOnChange = (
@@ -42,28 +40,22 @@ export default function ChatRoom(props: Props) {
         event.preventDefault();
 
         if (messageText) {
-            createMessage(messageText);
+            createMessage(messageText).then(() =>
+                props.updateMessages());
             setMessageText("");
 
-            dummy.current.scrollIntoView({ behavior: "smooth" });
+
+            dummy.current.scrollIntoView({behavior: "smooth"});
         }
     };
 
 
-    function fetchMessage(message)
-    {
-        fetch(url + '/send', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8',
-                // 'Authorization': 'Basic QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBOlBBU1NXT1JE'
-            },
-            body: JSON.stringify({
-                "senderId": userId,
+    async function fetchMessage(message) {
+        await postRequest('/send', {
                 "chatId": selectedChat.chatId,
-                "testOfMessage": message
-            })
-        }).then(
+                "textOfMessage": message
+            }, true
+        ).then(
             response => {
                 if (response.ok) {
                     response.json().then(res => {
@@ -75,9 +67,9 @@ export default function ChatRoom(props: Props) {
             })
     }
 
-    const createMessage = (text) => {
-            fetchMessage(text)
-        }
+    const createMessage = async (text) => {
+        await fetchMessage(text)
+    }
 
     const menu = (
         <Menu>

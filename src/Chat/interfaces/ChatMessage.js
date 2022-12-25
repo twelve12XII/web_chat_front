@@ -35,7 +35,7 @@ export default function ChatMessage(props: Props) {
                         <div className="message__content__sender">{senderName}</div>
                         <div className="message__content__text">{text}</div>
                         <p className="message__content__at">
-                            {createdAt && toDateTime(createdAt.seconds)}
+                            {createdAt && new Date(createdAt).toLocaleString('ru-RU')}
                         </p>
                     </div>
                 </div>

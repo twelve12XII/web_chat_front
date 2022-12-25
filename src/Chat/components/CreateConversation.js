@@ -2,10 +2,9 @@ import './CreateConversation.scss'
 import {ArrowLeftOutlined, ArrowRightOutlined} from "@ant-design/icons";
 import {Button, Input, Modal} from "antd";
 import {useState} from "react";
-import Login from "../../Login";
-import {url} from "../../constants";
+import {postRequest} from "../../constants";
+
 interface Props {
-    currentUserId: any;
     creatingGroup: boolean;
     handleShowCreateConversation: () => void;
     handleSelectChat: (chat?: any) => void;
@@ -38,18 +37,11 @@ export default function CreateConversation(props: Props) {
         setGroupName(event.target.value);
     };
     const fetchGroupData = () => {
-        fetch(url + '/create_chat', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8',
-                // 'Authorization': 'Basic QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBOlBBU1NXT1JE'
-            },
-            body: JSON.stringify({
-                "idOfRequested": addUserId,
-                "idOfCreator": currentUserId,
-                "chatName": groupName
-            })
-        }).then(
+        postRequest('/create_chat', {
+            "idOfRequested": addUserId,
+            "chatName": groupName
+        }, true)
+        .then(
             response => {
                 if(response.ok){
                     response.json().then(res => {

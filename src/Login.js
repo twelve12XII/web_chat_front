@@ -1,12 +1,12 @@
 import React, {useState} from 'react'
 import './Login.scss'
-import {Button} from "antd";
-import MyRoute from "./Chat/interfaces/MyRoute";
-import {Link, Route, useNavigate} from "react-router-dom";
-import {url} from "./constants";
+import {Button, Input} from "antd";
+import {Link, useNavigate} from "react-router-dom";
+import {setAuthHeader} from "./Auth";
 
 function Login() {
     const [name, setName] = useState('');
+    const [password, setPassword] = useState('');
     const [userName, setUserName] = useState({userName: 'TEST2'})
     const [userId, setUserId] = useState({userId: -2})
     const handleSetName = (event) => {
@@ -18,28 +18,27 @@ function Login() {
     function getMessage()
     {
         const fetchData = () => {
-            fetch(url + '/new_user', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json;charset=utf-8'
-                },
-                // mode: 'no-cors',
-                body: JSON.stringify({
-                    "userName": name
-                }),
-            }).then(
-                response => {
-                    if (response.ok) {
-                        response.json().then(res => {
-                            navigate(
-                                '/chats',
-                                { state: { name: res.userName, userId:res.id } }
-                            );
-                        })
-                    } else {
-                        console.log("exception" + response.status);
-                    }
-                })
+            // postRequest('/new_user', {
+            //     "userName": name
+            // }).then(
+            //     response => {
+            //         if (response.ok) {
+            //             response.json().then(res => {
+            //                 navigate(
+            //                     '/chats',
+            //                     { state: { name: res.userName, userId:res.id } }
+            //                 );
+            //             })
+            //         } else {
+            //             console.log("exception" + response.status);
+            //         }
+            //     })
+            setAuthHeader(name, password);
+            navigate(
+                '/chats',
+                { state: { name: name } }
+            );
+
         };
         fetchData();
     }
@@ -52,11 +51,20 @@ function Login() {
                     <p>Enter your name!</p>
                 </div>
                 <form>
-                    <input
+                    <Input
                         name="input"
                         value={name}
                         type="text"
-                        onChange={(event) => setName(event.target.value)}/>
+                        placeholder="name"
+                        onChange={(event) => setName(event.target.value)}
+                    />
+                    <Input
+                        name="password"
+                        type="text"
+                        placeholder="password"
+                        value={password}
+                        onChange={(event) => setPassword(event.target.value)}
+                    />
                     <Button
                         onClick={() => {
                             getMessage();
@@ -70,23 +78,6 @@ function Login() {
                 </form>
             </div>
         </div>
-        // <div className="user-name-form">
-        //     <div className="sign-in-form-header">
-        //     <div className="label-user-name">
-        //         <label>Username</label>
-        //     </div>
-        //     <div className="input-user-name">
-        //         <input name="input" value={name} type="text" onChange={(event) => setName(event.target.value)}/>
-        //     </div>
-        //     <div className="button-user-name">
-        //         <button onClick={() => {
-        //             getMessage();
-        //             window.location.assign('http://localhost:3000/chats/')
-        //         }
-        //         }>OK</button>
-        //     </div>
-        //     </div>
-        // </div>
     );
 }
 export default Login;
