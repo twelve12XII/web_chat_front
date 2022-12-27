@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import "./ChatMessage.scss"
+import {getUsername} from "../../Auth";
 
 interface Props {
     text: string;
@@ -26,12 +27,14 @@ export default function ChatMessage(props: Props) {
         //     setSenderName(user.displayName);
         // }
     }, );
+    let username = getUsername();
+    const className = username === senderName ? "message__content__me" : "message__content"
 
     return (
         <>
             {createdAt && (
                 <div className="message">
-                    <div className="message__content">
+                    <div className={className}>
                         <div className="message__content__sender">{senderName}</div>
                         <div className="message__content__text">{text}</div>
                         <p className="message__content__at">

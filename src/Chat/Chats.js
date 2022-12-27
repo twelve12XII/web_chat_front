@@ -27,11 +27,15 @@ function Chats() {
     //         }
     //     }
     // }, [conversations]);
+    let [interval, setInterval1]= useState(undefined)
     const handleSelectChat = (chat: any) => {
         setSelectedChat(chat);
         getMessages(chat);
+        clearInterval(interval)
+        setInterval1(setInterval(() => getMessages(chat), 5000))
     };
-    useEffect(() => {
+
+    function updateUserChatList() {
         postRequest('/user_chats').then(
             response => {
                 if (response.ok) {
@@ -46,7 +50,11 @@ function Chats() {
             .catch(function (error) {                        // catch
                 console.log('Request failed', error);
             })
-    }, []);
+    }
+    useEffect(() => {
+        updateUserChatList()
+    }, [])
+
     const [messages, setMessages] = useState([['senderName', 'TestName'], ['messageText', 'ee'], ['sendingTime', '2022-12-18T13:02:11.171478']]);
 
     function getMessages(chat: any = null) {
@@ -72,6 +80,7 @@ function Chats() {
             <div className="app-container">
                 <div className="app-container__menu">
                     <MenuContent
+                        updateUserChatList={updateUserChatList}
                         conversations={conversations}
                         handleSelectChat={handleSelectChat}
                     />

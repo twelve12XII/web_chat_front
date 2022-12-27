@@ -36,9 +36,11 @@ export default function ChatRoom(props: Props) {
         setMessageText(event.target.value);
     };
 
-    setTimeout(function(){
-        props.updateMessages();
-    }, 5000);
+    useEffect(() => {
+        // setInterval(function(){
+        //     props.updateMessages();
+        // }, 1000);
+    })
 
 
     const handleCreateMessage = (event: React.MouseEvent<HTMLButtonElement>) => {

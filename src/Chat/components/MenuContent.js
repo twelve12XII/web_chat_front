@@ -7,12 +7,14 @@ import {getUsername} from "../../Auth";
 interface Props {
     conversations: any;
     handleSelectChat: (chat: any) => void;
+    updateUserChatList: () => void;
 }
 
 export default function MenuContent(props: Props) {
     const {
         conversations,
         handleSelectChat,
+        updateUserChatList,
     } = props;
 
     const [loading, setLoading] = useState(false);
@@ -66,6 +68,7 @@ export default function MenuContent(props: Props) {
                 {/*<Tabs defaultActiveKey="1" centered>*/}
                 {/*    <Tabs.TabPane tab="Conversations" key="1">*/}
                         <ConversationsTab
+                            updateUserChatList={updateUserChatList}
                             conversations={conversations}
                             handleSelectChat={handleSelectChat}
                         />

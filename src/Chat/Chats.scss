@@ -13,6 +13,7 @@
     overflow: hidden;
     border: 1px solid #cccccc;
     &__menu {
+      max-width: 300px;
       flex: 40%;
       min-width: 260px;
       position: relative;

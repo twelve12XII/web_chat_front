@@ -6,6 +6,8 @@ import {postRequest} from "../../constants";
 
 interface Props {
     creatingGroup: boolean;
+    setCreatingGroup: boolean => void;
+    updateUserChatList: () => void;
     handleShowCreateConversation: () => void;
     handleSelectChat: (chat?: any) => void;
 }
@@ -14,6 +16,8 @@ export default function CreateConversation(props: Props) {
         currentUserId,
         handleSelectChat,
         creatingGroup,
+        updateUserChatList,
+        setCreatingGroup,
         handleShowCreateConversation,
     } = props;
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -47,6 +51,9 @@ export default function CreateConversation(props: Props) {
                     response.json().then(res => {
                         setChatId(res.id)
                         console.log(res)
+                        setIsModalVisible(false)
+                        updateUserChatList()
+                        setCreatingGroup(false)
                     })
                 }
                 else {

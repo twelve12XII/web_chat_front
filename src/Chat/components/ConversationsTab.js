@@ -8,11 +8,12 @@ import {useState} from "react";
 interface Props {
     conversations: ConversationInterface[];
     handleSelectChat: (chat?: any) => void;
+    updateUserChatList: () => void;
 }
 
 export default function ConversationsTab(props: Props) {
     const [creatingGroup, setCreatingGroup] = useState(false);
-    const { conversations, handleSelectChat } = props;
+    const { conversations, handleSelectChat, updateUserChatList } = props;
     const handleShowCreateConversation = () => {
         setCreatingGroup(!creatingGroup);
     };
@@ -34,7 +35,9 @@ export default function ConversationsTab(props: Props) {
                 <Button onClick={handleShowCreateConversation}>New conversation</Button>
             </div>
             <CreateConversation
+                updateUserChatList={updateUserChatList}
                 creatingGroup={creatingGroup}
+                setCreatingGroup={setCreatingGroup}
                 handleShowCreateConversation={handleShowCreateConversation}
                 handleSelectChat={handleSelectChat}
             />
