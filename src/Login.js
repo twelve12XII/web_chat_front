@@ -3,6 +3,7 @@ import './Login.scss'
 import {Button, Input} from "antd";
 import {Link, useNavigate} from "react-router-dom";
 import {setAuthHeader} from "./Auth";
+import {postRequest} from "./constants";
 
 function Login() {
     const [name, setName] = useState('');
@@ -18,21 +19,21 @@ function Login() {
     function getMessage()
     {
         const fetchData = () => {
-            // postRequest('/new_user', {
-            //     "userName": name
-            // }).then(
-            //     response => {
-            //         if (response.ok) {
-            //             response.json().then(res => {
-            //                 navigate(
-            //                     '/chats',
-            //                     { state: { name: res.userName, userId:res.id } }
-            //                 );
-            //             })
-            //         } else {
-            //             console.log("exception" + response.status);
-            //         }
-            //     })
+            postRequest('/new_user', {
+                "userName": name
+            }).then(
+                response => {
+                    if (response.ok) {
+                        response.json().then(res => {
+                            navigate(
+                                '/chats',
+                                { state: { name: res.userName, userId:res.id } }
+                            );
+                        })
+                    } else {
+                        console.log("exception" + response.status);
+                    }
+                })
             setAuthHeader(name, password);
             navigate(
                 '/chats',

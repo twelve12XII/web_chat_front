@@ -3,6 +3,7 @@ import './Chats.scss'
 import MenuContent from './components/MenuContent'
 import ChatRoom from "./interfaces/ChatRoom";
 import {postRequest} from "../constants";
+// import {updateContactName} from "./interfaces/users";
 
 // interface Props {
 //     name: any;
@@ -14,6 +15,7 @@ function Chats() {
     const [selectedChat, setSelectedChat] = useState('');
     const [openChat, setOpenChat] = useState(false);
     const [conversations, setConversations] = useState();
+    const [contacts, setContacts] = useState();
     const handleShowOpenChat = () => {
         setOpenChat(!openChat);
     };
@@ -35,12 +37,13 @@ function Chats() {
         setInterval1(setInterval(() => getMessages(chat), 5000))
     };
 
-    function updateUserChatList() {
-        postRequest('/user_chats').then(
+    function updateUserList() {
+        postRequest('/user_data').then(
             response => {
                 if (response.ok) {
                     response.json().then(res => {
-                        setConversations(res)
+                        setConversations(res.userChats)
+                        setContacts(res.userContacts)
                         console.log(res)
                     })
                 } else {
@@ -52,10 +55,71 @@ function Chats() {
             })
     }
     useEffect(() => {
-        updateUserChatList()
+        updateUserList()
     }, [])
 
+    const handleAddContact = async (contactName: string) => {
+        postRequest('/add_contact', {
+            "userName": contactName
+        }).then(
+            response => {
+                if (response.ok) {
+                    response.json().then(res => {
+                        console.log(res)
+                    })
+                } else {
+                    console.log("exception" + response.status);
+                }
+            }).then(async (res) => {
+            await postRequest('/user_data').then(
+                response => {
+                    if (response.ok) {
+                        response.json().then(res => {
+                            setConversations(res.userChats)
+                            setContacts(res.userContacts)
+                            console.log(res)
+                        })
+                    } else {
+                        console.log("exception" + response.status);
+                    }
+                })
+                .catch((err) => console.error(err));
+        })
+            .catch(function (error) {                        // catch
+                console.log('Request failed', error);
+            })
+    };
+
     const [messages, setMessages] = useState([['senderName', 'TestName'], ['messageText', 'ee'], ['sendingTime', '2022-12-18T13:02:11.171478']]);
+
+    const handleRemoveContact = (contactId: string) => {
+        postRequest('/user_data').then(
+            response => {
+                if (response.ok) {
+                    response.json().then(res => {
+                        setContacts(res.userContacts)
+                        console.log(res)
+                    })
+                } else {
+                    console.log("exception" + response.status);
+                }
+            })
+            .catch(function (error) {                        // catch
+                console.log('Request failed', error);
+            })
+    };
+
+    // const handleUpdateContact = async (
+    //     contactName: string
+    // ) => {
+    //     return await updateContactName(contactName)
+    //         .then((res: any) => {
+    //             setContacts(res);
+    //         })
+    //         .catch((err) => {
+    //             console.error(err);
+    //         });
+    // };
 
     function getMessages(chat: any = null) {
         if (chat == null)
@@ -80,9 +144,13 @@ function Chats() {
             <div className="app-container">
                 <div className="app-container__menu">
                     <MenuContent
-                        updateUserChatList={updateUserChatList}
+                        updateUserList={updateUserList}
                         conversations={conversations}
+                        contacts={contacts}
                         handleSelectChat={handleSelectChat}
+                        handleRemoveContact={handleRemoveContact}
+                        handleAddContact={handleAddContact}
+                        // handleUpdateContact={handleUpdateContact}
                     />
                 </div>
                 <div className="app-container__content">
