@@ -20,6 +20,8 @@ export default function MenuContent(props: Props) {
         handleSelectChat,
         updateUserList,
         contacts,
+        handleUpdateList,
+        errorMessage,
         // handleRemoveContact,
         handleAddContact,
         // handleUpdateContact,
@@ -37,6 +39,8 @@ export default function MenuContent(props: Props) {
         { label: 'Contacts', key: '2', children:
                 <ContactsTab
                 contacts={contacts}
+                errorMessage={errorMessage}
+                handleUpdateList={handleUpdateList}
                 setToFetchContacts={setToFetchContacts}
                 toFetchContacts={toFetchContacts}
                 // handleRemoveContact={handleRemoveContact}
@@ -93,7 +97,7 @@ export default function MenuContent(props: Props) {
                 {/*/>*/}
             </header>
             <div className="tabs-container">
-                Chats
+                {/*Chats*/}
                 <Tabs items={items} />;
             </div>
         </div>

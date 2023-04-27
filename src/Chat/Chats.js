@@ -12,10 +12,11 @@ import {postRequest} from "../constants";
 
 
 function Chats() {
-    const [selectedChat, setSelectedChat] = useState('');
+    const [selectedChat, setSelectedChat] = useState('Something went wrong');
     const [openChat, setOpenChat] = useState(false);
     const [conversations, setConversations] = useState();
     const [contacts, setContacts] = useState();
+    const [erMessage, setErMessage] = useState('')
     const handleShowOpenChat = () => {
         setOpenChat(!openChat);
     };
@@ -58,18 +59,23 @@ function Chats() {
         updateUserList()
     }, [])
 
+    const handleUpdateList = async () => {
+        updateUserList();
+    }
     const handleAddContact = async (contactName: string) => {
         postRequest('/add_contact', {
             "userName": contactName
-        }).then(
+        })
+            .then(
             response => {
-                if (response.ok) {
                     response.json().then(res => {
-                        console.log(res)
+                        if (response.ok) {
+                            console.log(res)
+                        }else {
+                            setErMessage(res.message);
+                            // console.log(res.message);
+                        }
                     })
-                } else {
-                    console.log("exception" + response.status);
-                }
             }).then(async (res) => {
             await postRequest('/user_data').then(
                 response => {
@@ -144,6 +150,8 @@ function Chats() {
             <div className="app-container">
                 <div className="app-container__menu">
                     <MenuContent
+                        handleUpdateList={handleUpdateList}
+                        errorMessage={erMessage}
                         updateUserList={updateUserList}
                         conversations={conversations}
                         contacts={contacts}

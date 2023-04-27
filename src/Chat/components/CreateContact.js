@@ -23,7 +23,7 @@ export default function CreateContact(props: Props) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    const { isModalVisible, setIsModalVisible, handleAddContact } = props;
+    const { errorMessage, isModalVisible, setIsModalVisible, handleAddContact } = props;
 
     const handleModalHide = () => {
         setIsModalVisible(false);
@@ -34,7 +34,6 @@ export default function CreateContact(props: Props) {
     const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         event.preventDefault();
         setError("");
-
         setContactDetails((prevState) => ({
             ...prevState,
             [event.target.name]: event.target.value,
@@ -46,12 +45,21 @@ export default function CreateContact(props: Props) {
             setLoading(true);
             handleAddContact(contactDetails.contactName)
                 .then((res: any) => {
-                    setLoading(false);
-                    setIsModalVisible(false);
-                    setContactDetails(initialContactState);
+                    console.log(errorMessage);
+                    if(errorMessage === 'Something went wrong') {
+                        setLoading(false);
+                        setIsModalVisible(false);
+                        setContactDetails(initialContactState)
+                    }
+                    else {
+                        console.log('log');
+                        setError(errorMessage);
+                        setLoading(false);
+                    }
                 })
                 .catch((err: any) => {
-                    setError(err);
+                    // console.log('log');
+                    // setError("err");
                     setLoading(false);
                 });
         } else {
@@ -62,11 +70,11 @@ export default function CreateContact(props: Props) {
     return (
         <>
             <Modal
-                title="Create a new contact"
+                title="Add a new contact"
                 open={isModalVisible}
                 onCancel={handleModalHide}
                 onOk={() => handleCreateContact()}
-                okText="Create Contact"
+                okText="Add Contact"
                 confirmLoading={loading}
             >
                 Enter contact's name:

@@ -26,6 +26,8 @@ export default function ContactsTab(props: Props) {
         setToFetchContacts,
         // handleRemoveContact,
         handleAddContact,
+        handleUpdateList,
+        errorMessage,
         // handleUpdateContact,
     } = props;
 
@@ -58,7 +60,9 @@ export default function ContactsTab(props: Props) {
             </div>
             <Button onClick={() => setIsModalVisible(true)}>New contact</Button>
             <CreateContact
+                handleUpdateList={handleUpdateList}
                 contacts={contacts}
+                errorMessage={errorMessage}
                 isModalVisible={isModalVisible}
                 setIsModalVisible={setIsModalVisible}
                 toFetchContacts={toFetchContacts}

@@ -8,6 +8,7 @@ import {setAuthHeader} from "./Auth";
 function SignUp() {
     let navigate = useNavigate();
     const [error, setError] = useState(false);
+    const [erMessage, setErMessage] = useState(' Something went wrong')
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
 
@@ -22,17 +23,23 @@ function SignUp() {
                 false
             ).then(
                 response => {
-                    if (response.ok) {
+                    try {
                         setAuthHeader(name, password)
                         response.json().then(res => {
                             console.log(res)
-                            navigate(
-                                '/chats',
-                                {state: {name: res.userName, userId: res.id}}
-                            );
+                            if(response.ok){
+                                navigate(
+                                    '/chats',
+                                    {state: {name: res.userName, userId: res.id}}
+                                );
+                            }
+                            else{
+                                // console.log(res.message);
+                                setErMessage(res.message);
+                                setError(true);
+                            }
                         }).catch(error => setError(true))
-                    } else {
-                        console.log("exception" + response.status);
+                    } catch (error) {
                     }
                 })
 
@@ -72,9 +79,9 @@ function SignUp() {
                     >
                         Sign up
                     </Button>
-                    {/*{error && (*/}
-                    {/*    <span style={{ color: "red", fontSize: "0.75rem" }}>{error}</span>*/}
-                    {/*)}*/}
+                    {error && (
+                        <p><span style={{ color: "red", fontSize: "0.75rem" }}>{erMessage}</span></p>
+                    )}
                 </form>
             </div>
         </div>
