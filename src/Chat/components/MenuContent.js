@@ -1,4 +1,5 @@
-import {Button, Dropdown, Menu, Tabs} from "antd";
+import {Button, Menu, Tabs} from "antd";
+import { Form, FormGroup, Dropdown } from "react-bootstrap";
 import './MenuContent.scss'
 import ConversationsTab from './ConversationsTab'
 import {useState} from "react";
@@ -22,8 +23,10 @@ export default function MenuContent(props: Props) {
         contacts,
         handleUpdateList,
         errorMessage,
+        handleDeleteAccount,
         // handleRemoveContact,
         handleAddContact,
+        handleRemoveChat,
         // handleUpdateContact,
     } = props;
 
@@ -34,6 +37,7 @@ export default function MenuContent(props: Props) {
                 <ConversationsTab
                 updateUserList={updateUserList}
                 conversations={conversations}
+                handleRemoveChat={handleRemoveChat}
                 handleSelectChat={handleSelectChat}
                 /> }, // remember to pass the key prop
         { label: 'Contacts', key: '2', children:
@@ -50,15 +54,15 @@ export default function MenuContent(props: Props) {
     ];
 
     let navigate = useNavigate();
-    const menu = (
-        <Menu>
-            <Menu.Item>
-                <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">1st menu item</a>
-                {/*key="1" onClick={() => navigate('/')}>*/}
-                {/*Sign out*/}
-            </Menu.Item>
-        </Menu>
-    );
+    // const menu = (
+    //     <Menu>
+    //         <Menu.Item>
+    //             <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">1st menu item</a>
+    //             {/*key="1" onClick={() => navigate('/')}>*/}
+    //             Sign out
+    //         </Menu.Item>
+    //     </Menu>
+    // );
 
     return(
         <>
@@ -74,8 +78,8 @@ export default function MenuContent(props: Props) {
                     />
                 ) : (
         <div className="app-container__menu__content">
-            <header>
-                <div style={{ display: "flex", alignItems: "center" }}>
+            <header className={"header"}>
+                <div className={"key"} style={{ display: "flex", alignItems: "center" }}>
                     <Button
                         onClick={() => console.log(getUsername())}
                         shape="circle"
@@ -91,10 +95,22 @@ export default function MenuContent(props: Props) {
                 {getUsername()}
               </span>
                 </div>
-                {/*<Dropdown*/}
-                {/*    menu={menu}*/}
-                {/*    // icon={<MoreOutlined style={{ fontSize: "1.65rem" }} />}*/}
-                {/*/>*/}
+                <Form>
+                    <FormGroup controlId="selection">
+
+                        <Dropdown>
+                            <Dropdown.Toggle variant="success" id="dropdown-basic">
+                                Menu
+                            </Dropdown.Toggle>
+
+                            <Dropdown.Menu>
+                                <Dropdown.Item key="1" onClick={() => navigate('/')}>Sign out</Dropdown.Item>
+                                <Dropdown.Item key = "2" onClick={() => handleDeleteAccount}>Delete account</Dropdown.Item>
+                                {/*<Dropdown.Item>xyz</Dropdown.Item>*/}
+                            </Dropdown.Menu>
+                        </Dropdown>
+                    </FormGroup>
+                </Form>
             </header>
             <div className="tabs-container">
                 {/*Chats*/}

@@ -13,7 +13,7 @@ interface Props {
 
 export default function ConversationsTab(props: Props) {
     const [creatingGroup, setCreatingGroup] = useState(false);
-    const { conversations, handleSelectChat, updateUserList } = props;
+    const { handleRemoveChat, conversations, handleSelectChat, updateUserList } = props;
     const handleShowCreateConversation = () => {
         setCreatingGroup(!creatingGroup);
     };
@@ -25,6 +25,7 @@ export default function ConversationsTab(props: Props) {
                         return (
                             <ConversationCard
                                 key={index}
+                                handleRemoveChat={handleRemoveChat}
                                 conversationName={conv.chatName}
                                 conversationId={conv.chatId}
                                 onClick={() => handleSelectChat(conv)}

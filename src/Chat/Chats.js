@@ -2,7 +2,8 @@ import React, {useEffect, useState} from 'react'
 import './Chats.scss'
 import MenuContent from './components/MenuContent'
 import ChatRoom from "./interfaces/ChatRoom";
-import {postRequest} from "../constants";
+import {getRequest, postRequest} from "../constants";
+import {useNavigate} from "react-router-dom";
 // import {updateContactName} from "./interfaces/users";
 
 // interface Props {
@@ -17,6 +18,7 @@ function Chats() {
     const [conversations, setConversations] = useState();
     const [contacts, setContacts] = useState();
     const [erMessage, setErMessage] = useState('')
+    let navigate = useNavigate();
     const handleShowOpenChat = () => {
         setOpenChat(!openChat);
     };
@@ -61,6 +63,11 @@ function Chats() {
 
     const handleUpdateList = async () => {
         updateUserList();
+    }
+
+    const handleDeleteAccount = async () => {
+        navigate('/');
+        getRequest('/delete_account');
     }
     const handleAddContact = async (contactName: string) => {
         postRequest('/add_contact', {
@@ -126,6 +133,35 @@ function Chats() {
     //             console.error(err);
     //         });
     // };
+    const handleRemoveChat = async () => {
+        let chat = selectedChat
+        postRequest('/delete_chat', {
+            'chatId': chat.chatId
+        }).then(
+            response => {
+                if (response.ok) {
+                    response.json().then(res => {
+                        console.log(res)
+                    })
+                } else {
+                    console.log("exception" + response.status);
+                }
+            }
+        ).then(async (res) => {
+            await postRequest('/user_data').then(
+                response => {
+                    if (response.ok) {
+                        response.json().then(res => {
+                            setConversations(res.userChats)
+                            setContacts(res.userContacts)
+                            console.log(res)
+                        })
+                    } else {
+                        console.log("exception" + response.status);
+                    }
+                })
+        })
+    }
 
     function getMessages(chat: any = null) {
         if (chat == null)
@@ -150,14 +186,16 @@ function Chats() {
             <div className="app-container">
                 <div className="app-container__menu">
                     <MenuContent
+                        handleDeleteAccount={handleDeleteAccount}
                         handleUpdateList={handleUpdateList}
                         errorMessage={erMessage}
                         updateUserList={updateUserList}
                         conversations={conversations}
                         contacts={contacts}
                         handleSelectChat={handleSelectChat}
-                        handleRemoveContact={handleRemoveContact}
+                        // handleRemoveContact={handleRemoveContact}
                         handleAddContact={handleAddContact}
+                        handleRemoveChat={handleRemoveChat}
                         // handleUpdateContact={handleUpdateContact}
                     />
                 </div>
@@ -168,6 +206,7 @@ function Chats() {
                                 messages={messages}
                                 selectedChat={selectedChat}
                                 openChat={openChat}
+                                handleRemoveChat={handleRemoveChat}
                                 // contacts={contacts}
                                 handleSelectChat={handleSelectChat}
                                 updateMessages={getMessages}

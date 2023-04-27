@@ -15,7 +15,7 @@ interface Props {
 
 export default function ChatRoom(props: Props) {
     const [messageText, setMessageText] = useState("");
-    const {selectedChat, handleSelectChat, /*contacts,*/ messages} = props;
+    const {handleRemoveChat, selectedChat, handleSelectChat, /*contacts,*/ messages} = props;
     const [groupName, setGroupName] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -116,9 +116,13 @@ export default function ChatRoom(props: Props) {
                         </div>
                         <span>{selectedChat.chatName}</span>
                         <Button
-                            menu={menu}
+                            // menu={menu}
+                            onClick={() => handleRemoveChat}
                             icon={<MoreOutlined style={{fontSize: "1.65rem"}}/>}
-                        />
+                        >
+                            del
+                        </Button>
+
                     </header>
                     <main>
                         <div>

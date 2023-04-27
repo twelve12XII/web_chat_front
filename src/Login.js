@@ -19,9 +19,8 @@ function Login() {
     function getMessage()
     {
         const fetchData = () => {
-            postRequest('/new_user', {
-                "userName": name
-            }).then(
+            setAuthHeader(name, password);
+            postRequest('/user_data').then(
                 response => {
                     if (response.ok) {
                         response.json().then(res => {
@@ -34,11 +33,6 @@ function Login() {
                         console.log("exception" + response.status);
                     }
                 })
-            setAuthHeader(name, password);
-            navigate(
-                '/chats',
-                { state: { name: name } }
-            );
 
         };
         fetchData();
