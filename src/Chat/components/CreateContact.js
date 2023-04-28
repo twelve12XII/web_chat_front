@@ -45,21 +45,17 @@ export default function CreateContact(props: Props) {
             setLoading(true);
             handleAddContact(contactDetails.contactName)
                 .then((res: any) => {
-                    console.log(errorMessage);
                     if(errorMessage === 'Something went wrong') {
                         setLoading(false);
                         setIsModalVisible(false);
                         setContactDetails(initialContactState)
                     }
                     else {
-                        console.log('log');
                         setError(errorMessage);
                         setLoading(false);
                     }
                 })
                 .catch((err: any) => {
-                    // console.log('log');
-                    // setError("err");
                     setLoading(false);
                 });
         } else {

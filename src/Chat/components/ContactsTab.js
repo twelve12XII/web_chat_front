@@ -24,7 +24,6 @@ export default function ContactsTab(props: Props) {
         contacts = [],
         toFetchContacts,
         setToFetchContacts,
-        // handleRemoveContact,
         handleAddContact,
         handleUpdateList,
         errorMessage,
@@ -52,8 +51,8 @@ export default function ContactsTab(props: Props) {
                         <ContactCard
                             key={index}
                             contact={contact}
-                            // handleRemoveContact={handleRemoveContact}
                             handleEditingContact={handleEditingContact}
+                            handleUpdateList={handleUpdateList}
                         />
                     );
                 })}

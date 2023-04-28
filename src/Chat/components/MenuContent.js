@@ -1,4 +1,4 @@
-import {Button, Menu, Tabs} from "antd";
+import {Button, Input, Menu, Modal, Tabs} from "antd";
 import { Form, FormGroup, Dropdown } from "react-bootstrap";
 import './MenuContent.scss'
 import ConversationsTab from './ConversationsTab'
@@ -30,7 +30,14 @@ export default function MenuContent(props: Props) {
         // handleRemoveChat,
         // handleUpdateContact,
     } = props;
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const handleModalHide = () => {
+        setIsModalVisible(false);
+    };
 
+    const handleModalShow = () => {
+        setIsModalVisible(true);
+    };
     const [loading, setLoading] = useState(false);
     const [toFetchContacts, setToFetchContacts] = useState(false);
     const items = [
@@ -55,18 +62,8 @@ export default function MenuContent(props: Props) {
     ];
 
     let navigate = useNavigate();
-    // const menu = (
-    //     <Menu>
-    //         <Menu.Item>
-    //             <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">1st menu item</a>
-    //             {/*key="1" onClick={() => navigate('/')}>*/}
-    //             Sign out
-    //         </Menu.Item>
-    //     </Menu>
-    // );
     function deleteAccount(){
-        postRequest('/delete_account')
-        navigate('/');
+        postRequest('/delete_account').then(navigate("/"));
     }
     return(
         <>
@@ -109,12 +106,20 @@ export default function MenuContent(props: Props) {
 
                             <Dropdown.Menu>
                                 <Dropdown.Item key="1" onClick={() => navigate('/')}>Logout</Dropdown.Item>
-                                <Dropdown.Item key="2" onClick={() => deleteAccount()}>Delete account</Dropdown.Item>
+                                <Dropdown.Item key="2" onClick={() => handleModalShow()}>Delete account</Dropdown.Item>
                                 {/*<Dropdown.Item>xyz</Dropdown.Item>*/}
                             </Dropdown.Menu>
                         </Dropdown>
                     </FormGroup>
                 </Form>
+                <Modal
+                    title="Your account will be deleted"
+                    open={isModalVisible}
+                    onCancel={handleModalHide}
+                    onOk={deleteAccount}
+                    okText="Delete account"
+                >
+                </Modal>
             </header>
             <div className="tabs-container">
                 {/*Chats*/}

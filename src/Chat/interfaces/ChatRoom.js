@@ -1,5 +1,5 @@
 import {Button, Input, Menu, Modal} from "antd";
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {MoreOutlined} from "@ant-design/icons";
 import "./ChatRoom.scss"
 import ChatMessage from "./ChatMessage";
@@ -20,8 +20,33 @@ export default function ChatRoom(props: Props) {
     const {handleUpdateList, selectedChat, handleSelectChat, /*contacts,*/ messages} = props;
     const [groupName, setGroupName] = useState("");
     const [loading, setLoading] = useState(false);
-
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isModalVisibleDeleteChat, setIsModalVisibleDeleteChat] = useState(false);
     const dummy = useRef(null);
+    const [addUserName, setAddUserName] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const handleModalHide = (key:string) => {
+        setErrorMessage("");
+        switch (key) {
+            case "1": setIsModalVisibleDeleteChat(false);
+            break;
+            case "2": setIsModalVisible(false);
+            break;
+            default: setIsModalVisibleDeleteChat(false);
+                setIsModalVisible(false);
+                break;
+        }
+    };
+
+    const handleModalShow = (key:string) => {
+        setErrorMessage('')
+        switch (key) {
+            case "1": setIsModalVisibleDeleteChat(true);
+            break;
+            case "2": setIsModalVisible(true);
+            break;
+        }
+    };
 
     useEffect(() => {
         if (dummy.current) {
@@ -64,18 +89,28 @@ export default function ChatRoom(props: Props) {
             "chatId": selectedChat.chatId
         }).then(
             response => {
-                if (response.ok) {
-                    response.json().then(res => {
+                response.json().then(res => {
+                    if (response.ok) {
                         console.log(res)
-                    })
-                } else {
-                    console.log("exception" + response.status);
-                }
+                    }else {
+                        setErrorMessage(res.message);
+                        console.log(res.message);
+                    }
+                })
             }
         ).then(
             handleUpdateList
         )
     }
+
+    const handleGroupOnChange = () => {
+        postRequest("/add_contact_to_chat", {
+            "name": addUserName,
+            "chatId": selectedChat.chatId
+        }).then(
+            handleUpdateList
+        )
+    };
 
     async function fetchMessage(message) {
         await postRequest('/send', {
@@ -155,25 +190,42 @@ export default function ChatRoom(props: Props) {
                             <FormGroup controlId="selection">
 
                                 <Dropdown>
-                                    <Dropdown.Toggle variant="success" id="dropdown-basic">
+                                    <Dropdown.Toggle variant="success" id="dropdown-toggle">
                                         Menu
                                     </Dropdown.Toggle>
-
                                     <Dropdown.Menu>
-                                        <Dropdown.Item key="1" onClick={() => removeChat()}>Delete chat</Dropdown.Item>
-                                        {/*<Dropdown.Item key="2" onClick={() => deleteAccount()}>Delete account</Dropdown.Item>*/}
+                                        <Dropdown.Item key="1" onClick={() => handleModalShow("1")}>Delete chat</Dropdown.Item>
+                                        <Dropdown.Item key="2" onClick={() => handleModalShow("2")}>Add new user</Dropdown.Item>
                                         {/*<Dropdown.Item>xyz</Dropdown.Item>*/}
                                     </Dropdown.Menu>
                                 </Dropdown>
                             </FormGroup>
                         </Form>
-                        {/*<Button*/}
-                        {/*    menu={menu}*/}
-                        {/*    // onClick={() => handleRemoveChat}*/}
-                        {/*    icon={<MoreOutlined style={{fontSize: "1.65rem"}}/>}*/}
-                        {/*>*/}
-                        {/*</Button>*/}
-
+                        <Modal
+                            title="Add contact to the chat"
+                            open={isModalVisible}
+                            onCancel={handleModalHide}
+                            onOk={handleGroupOnChange}
+                            okText="Add contact"
+                        >
+                            <Input
+                                type="text"
+                                placeholder="What's the user name?"
+                                onChange={(event) => setAddUserName(event.target.value)}
+                                style={{ marginBottom: 6 }}
+                            />
+                        </Modal>
+                        <Modal
+                            title="Delete this chat?"
+                            open={isModalVisibleDeleteChat}
+                            onCancel={handleModalHide}
+                            onOk={removeChat}
+                            okText="Delete chat"
+                        >
+                            {errorMessage !== '' && (
+                                <div style={{ color: "red", fontSize: "0.75rem" }}>{errorMessage}</div>
+                            )}
+                        </Modal>
                     </header>
                     <main>
                         <div>

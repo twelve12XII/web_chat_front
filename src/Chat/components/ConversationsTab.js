@@ -25,7 +25,6 @@ export default function ConversationsTab(props: Props) {
                         return (
                             <ConversationCard
                                 key={index}
-                                // handleRemoveChat={handleRemoveChat}
                                 conversationName={conv.chatName}
                                 conversationId={conv.chatId}
                                 onClick={() => handleSelectChat(conv)}

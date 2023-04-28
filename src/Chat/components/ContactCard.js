@@ -1,16 +1,35 @@
-import { Button } from "antd";
+import {Button, Input, Modal} from "antd";
 import { CloseOutlined, EditOutlined } from "@ant-design/icons";
 import "./ContactCard.scss";
+import {postRequest} from "../../constants";
+import {useState} from "react";
 
 interface Props {
     contact: any;
     onClick?: () => void;
-    handleRemoveContact?: (contactId: string) => void;
     handleEditingContact?: any;
 }
 
 export default function ContactCard(props: Props) {
-    const { contact, onClick, handleRemoveContact, handleEditingContact } = props;
+    const { contact, onClick, handleEditingContact, handleUpdateList } = props;
+    const[contactName, setContactName] = useState();
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const handleModalHide = () => {
+        setIsModalVisible(false);
+    };
+
+    const handleModalShow = (name: string) => {
+        console.log(name);
+        setContactName(name);
+        setIsModalVisible(true);
+    };
+    const handleDeleteContact = () => {
+        postRequest("/delete_contact", {
+            "contactName": contactName
+        }).then(
+            handleUpdateList
+        )
+    }
 
     return (
         <>
@@ -39,10 +58,16 @@ export default function ContactCard(props: Props) {
                         type="text"
                         shape="circle"
                         icon={<CloseOutlined style={{ color: "#555" }} />}
-                        onClick={() =>
-                            handleRemoveContact && handleRemoveContact(contact.uid)
-                        }
+                        onClick={() => handleModalShow(contact.contactName)}
                     />
+                    <Modal
+                        title="Contact will be deleted"
+                        open={isModalVisible}
+                        onCancel={handleModalHide}
+                        onOk={handleDeleteContact}
+                        okText="Delete contact"
+                    >
+                    </Modal>
                 </div>
             </div>
         </>

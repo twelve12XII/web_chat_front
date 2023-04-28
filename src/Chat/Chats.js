@@ -65,10 +65,6 @@ function Chats() {
         updateUserList();
     }
 
-    // const handleDeleteAccount = async () => {
-    //     navigate('/');
-    //     getRequest('/delete_account');
-    // }
     const handleAddContact = async (contactName: string) => {
         postRequest('/add_contact', {
             "userName": contactName
@@ -105,23 +101,6 @@ function Chats() {
 
     const [messages, setMessages] = useState([['senderName', 'TestName'], ['messageText', 'ee'], ['sendingTime', '2022-12-18T13:02:11.171478']]);
 
-    const handleRemoveContact = (contactId: string) => {
-        postRequest('/user_data').then(
-            response => {
-                if (response.ok) {
-                    response.json().then(res => {
-                        setContacts(res.userContacts)
-                        console.log(res)
-                    })
-                } else {
-                    console.log("exception" + response.status);
-                }
-            })
-            .catch(function (error) {                        // catch
-                console.log('Request failed', error);
-            })
-    };
-
     // const handleUpdateContact = async (
     //     contactName: string
     // ) => {
@@ -157,16 +136,13 @@ function Chats() {
             <div className="app-container">
                 <div className="app-container__menu">
                     <MenuContent
-                        // handleDeleteAccount={handleDeleteAccount}
                         handleUpdateList={handleUpdateList}
                         errorMessage={erMessage}
                         updateUserList={updateUserList}
                         conversations={conversations}
                         contacts={contacts}
                         handleSelectChat={handleSelectChat}
-                        // handleRemoveContact={handleRemoveContact}
                         handleAddContact={handleAddContact}
-                        // handleRemoveChat={handleRemoveChat}
                         // handleUpdateContact={handleUpdateContact}
                     />
                 </div>
