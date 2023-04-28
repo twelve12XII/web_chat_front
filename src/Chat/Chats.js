@@ -65,10 +65,10 @@ function Chats() {
         updateUserList();
     }
 
-    const handleDeleteAccount = async () => {
-        navigate('/');
-        getRequest('/delete_account');
-    }
+    // const handleDeleteAccount = async () => {
+    //     navigate('/');
+    //     getRequest('/delete_account');
+    // }
     const handleAddContact = async (contactName: string) => {
         postRequest('/add_contact', {
             "userName": contactName
@@ -133,35 +133,6 @@ function Chats() {
     //             console.error(err);
     //         });
     // };
-    const handleRemoveChat = async () => {
-        let chat = selectedChat
-        postRequest('/delete_chat', {
-            'chatId': chat.chatId
-        }).then(
-            response => {
-                if (response.ok) {
-                    response.json().then(res => {
-                        console.log(res)
-                    })
-                } else {
-                    console.log("exception" + response.status);
-                }
-            }
-        ).then(async (res) => {
-            await postRequest('/user_data').then(
-                response => {
-                    if (response.ok) {
-                        response.json().then(res => {
-                            setConversations(res.userChats)
-                            setContacts(res.userContacts)
-                            console.log(res)
-                        })
-                    } else {
-                        console.log("exception" + response.status);
-                    }
-                })
-        })
-    }
 
     function getMessages(chat: any = null) {
         if (chat == null)
@@ -186,7 +157,7 @@ function Chats() {
             <div className="app-container">
                 <div className="app-container__menu">
                     <MenuContent
-                        handleDeleteAccount={handleDeleteAccount}
+                        // handleDeleteAccount={handleDeleteAccount}
                         handleUpdateList={handleUpdateList}
                         errorMessage={erMessage}
                         updateUserList={updateUserList}
@@ -195,7 +166,7 @@ function Chats() {
                         handleSelectChat={handleSelectChat}
                         // handleRemoveContact={handleRemoveContact}
                         handleAddContact={handleAddContact}
-                        handleRemoveChat={handleRemoveChat}
+                        // handleRemoveChat={handleRemoveChat}
                         // handleUpdateContact={handleUpdateContact}
                     />
                 </div>
@@ -205,9 +176,9 @@ function Chats() {
                             <ChatRoom
                                 messages={messages}
                                 selectedChat={selectedChat}
-                                openChat={openChat}
-                                handleRemoveChat={handleRemoveChat}
+                                // openChat={openChat}
                                 // contacts={contacts}
+                                handleUpdateList={handleUpdateList}
                                 handleSelectChat={handleSelectChat}
                                 updateMessages={getMessages}
                             />

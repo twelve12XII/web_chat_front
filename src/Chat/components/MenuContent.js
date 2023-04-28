@@ -8,6 +8,7 @@ import {useNavigate} from "react-router-dom";
 import ContactsTab from "./ContactsTab";
 import {MoreOutlined} from "@ant-design/icons";
 import Icon from "antd/es/icon";
+import {getRequest, postRequest} from "../../constants";
 
 interface Props {
     conversations: any;
@@ -23,10 +24,10 @@ export default function MenuContent(props: Props) {
         contacts,
         handleUpdateList,
         errorMessage,
-        handleDeleteAccount,
+        // handleDeleteAccount,
         // handleRemoveContact,
         handleAddContact,
-        handleRemoveChat,
+        // handleRemoveChat,
         // handleUpdateContact,
     } = props;
 
@@ -37,7 +38,7 @@ export default function MenuContent(props: Props) {
                 <ConversationsTab
                 updateUserList={updateUserList}
                 conversations={conversations}
-                handleRemoveChat={handleRemoveChat}
+                // handleRemoveChat={handleRemoveChat}
                 handleSelectChat={handleSelectChat}
                 /> }, // remember to pass the key prop
         { label: 'Contacts', key: '2', children:
@@ -63,7 +64,10 @@ export default function MenuContent(props: Props) {
     //         </Menu.Item>
     //     </Menu>
     // );
-
+    function deleteAccount(){
+        postRequest('/delete_account')
+        navigate('/');
+    }
     return(
         <>
             {loading ? (
@@ -81,7 +85,7 @@ export default function MenuContent(props: Props) {
             <header className={"header"}>
                 <div className={"key"} style={{ display: "flex", alignItems: "center" }}>
                     <Button
-                        onClick={() => console.log(getUsername())}
+                        // onClick={}
                         shape="circle"
                         style={{
                             height: "40px",
@@ -105,7 +109,7 @@ export default function MenuContent(props: Props) {
 
                             <Dropdown.Menu>
                                 <Dropdown.Item key="1" onClick={() => navigate('/')}>Sign out</Dropdown.Item>
-                                <Dropdown.Item key = "2" onClick={() => handleDeleteAccount}>Delete account</Dropdown.Item>
+                                <Dropdown.Item key="2" onClick={() => deleteAccount()}>Delete account</Dropdown.Item>
                                 {/*<Dropdown.Item>xyz</Dropdown.Item>*/}
                             </Dropdown.Menu>
                         </Dropdown>

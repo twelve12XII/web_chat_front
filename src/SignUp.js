@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {Button, Input} from "antd";
 import './SignUp.scss'
 import {postRequest} from "./constants";
@@ -82,6 +82,9 @@ function SignUp() {
                     {error && (
                         <p><span style={{ color: "red", fontSize: "0.75rem" }}>{erMessage}</span></p>
                     )}
+                    <div className="login-account">
+                        Or, <Link to="/">Log In</Link>
+                    </div>
                 </form>
             </div>
         </div>

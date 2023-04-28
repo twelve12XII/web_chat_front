@@ -4,6 +4,8 @@ import {MoreOutlined} from "@ant-design/icons";
 import "./ChatRoom.scss"
 import ChatMessage from "./ChatMessage";
 import {postRequest} from "../../constants";
+import {Dropdown, Form, FormGroup} from "react-bootstrap";
+import updateUserList from '../Chats'
 
 interface Props {
     selectedChat: any;
@@ -15,7 +17,7 @@ interface Props {
 
 export default function ChatRoom(props: Props) {
     const [messageText, setMessageText] = useState("");
-    const {handleRemoveChat, selectedChat, handleSelectChat, /*contacts,*/ messages} = props;
+    const {handleUpdateList, selectedChat, handleSelectChat, /*contacts,*/ messages} = props;
     const [groupName, setGroupName] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -56,6 +58,24 @@ export default function ChatRoom(props: Props) {
         }
     };
 
+    function removeChat () {
+        // let chat = selectedChat
+        postRequest("/delete_chat", {
+            "chatId": selectedChat.chatId
+        }).then(
+            response => {
+                if (response.ok) {
+                    response.json().then(res => {
+                        console.log(res)
+                    })
+                } else {
+                    console.log("exception" + response.status);
+                }
+            }
+        ).then(
+            handleUpdateList
+        )
+    }
 
     async function fetchMessage(message) {
         await postRequest('/send', {
@@ -78,27 +98,43 @@ export default function ChatRoom(props: Props) {
         await fetchMessage(text)
     }
 
-    const menu = (
-        <Menu>
-            <Menu.Item
-                key="1"
-                onClick={() => {
-                    // handleChangeNameDialog();
-                }}
-            >
-                Edit group name
-            </Menu.Item>
-            <Menu.Item
-                key="4"
-                onClick={() => {
-                    // deleteGroup(selectedChat.id);
-                    handleSelectChat(null);
-                }}
-            >
-                Exit group
-            </Menu.Item>
-        </Menu>
-    );
+    // const menu = (
+    //     // <Form>
+    //     //     <FormGroup controlId="selection">
+    //     //
+    //     //         <Dropdown>
+    //     //             <Dropdown.Toggle variant="success" id="dropdown-basic">
+    //     //                 Menu
+    //     //             </Dropdown.Toggle>
+    //     //
+    //     //             <Dropdown.Menu>
+    //     //                 <Dropdown.Item key="1" onClick={() => removeChat()}>Delete chat</Dropdown.Item>
+    //     //                 {/*<Dropdown.Item key="2" onClick={() => deleteAccount()}>Delete account</Dropdown.Item>*/}
+    //     //                 {/*<Dropdown.Item>xyz</Dropdown.Item>*/}
+    //     //             </Dropdown.Menu>
+    //     //         </Dropdown>
+    //     //     </FormGroup>
+    //     // </Form>
+    //     // <Menu>
+    //     //     <Menu.Item
+    //     //         key="1"
+    //     //         onClick={() => {
+    //     //             // handleChangeNameDialog();
+    //     //         }}
+    //     //     >
+    //     //         Edit group name
+    //     //     </Menu.Item>
+    //     //     <Menu.Item
+    //     //         key="4"
+    //     //         onClick={() => {
+    //     //             // deleteGroup(selectedChat.id);
+    //     //             handleSelectChat(null);
+    //     //         }}
+    //     //     >
+    //     //         Exit group
+    //     //     </Menu.Item>
+    //     // </Menu>
+    // );
 
     return (
         <>
@@ -115,13 +151,28 @@ export default function ChatRoom(props: Props) {
                         >
                         </div>
                         <span>{selectedChat.chatName}</span>
-                        <Button
-                            // menu={menu}
-                            onClick={() => handleRemoveChat}
-                            icon={<MoreOutlined style={{fontSize: "1.65rem"}}/>}
-                        >
-                            del
-                        </Button>
+                        <Form>
+                            <FormGroup controlId="selection">
+
+                                <Dropdown>
+                                    <Dropdown.Toggle variant="success" id="dropdown-basic">
+                                        Menu
+                                    </Dropdown.Toggle>
+
+                                    <Dropdown.Menu>
+                                        <Dropdown.Item key="1" onClick={() => removeChat()}>Delete chat</Dropdown.Item>
+                                        {/*<Dropdown.Item key="2" onClick={() => deleteAccount()}>Delete account</Dropdown.Item>*/}
+                                        {/*<Dropdown.Item>xyz</Dropdown.Item>*/}
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            </FormGroup>
+                        </Form>
+                        {/*<Button*/}
+                        {/*    menu={menu}*/}
+                        {/*    // onClick={() => handleRemoveChat}*/}
+                        {/*    icon={<MoreOutlined style={{fontSize: "1.65rem"}}/>}*/}
+                        {/*>*/}
+                        {/*</Button>*/}
 
                     </header>
                     <main>

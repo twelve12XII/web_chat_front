@@ -79,7 +79,7 @@ export default function CreateConversation(props: Props) {
                         <div>
                             <Input
                                 type="text"
-                                placeholder="What's the user's id you want to add?"
+                                placeholder="What's the user's name you want to add?"
                                 onChange={handleUserAddOnChange}
                                 style={{ marginBottom: 6 }}
                             />
