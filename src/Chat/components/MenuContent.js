@@ -108,7 +108,7 @@ export default function MenuContent(props: Props) {
                             </Dropdown.Toggle>
 
                             <Dropdown.Menu>
-                                <Dropdown.Item key="1" onClick={() => navigate('/')}>Sign out</Dropdown.Item>
+                                <Dropdown.Item key="1" onClick={() => navigate('/')}>Logout</Dropdown.Item>
                                 <Dropdown.Item key="2" onClick={() => deleteAccount()}>Delete account</Dropdown.Item>
                                 {/*<Dropdown.Item>xyz</Dropdown.Item>*/}
                             </Dropdown.Menu>
