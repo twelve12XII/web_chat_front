@@ -11,7 +11,6 @@ interface Props {
     toFetchContacts: boolean;
     setToFetchContacts: any;
     // handleRemoveContact: (contactId: string) => void;
-    handleAddContact: (uid: string, contactName: string) => void;
     // handleUpdateContact: any;
 }
 
@@ -24,12 +23,31 @@ export default function ContactsTab(props: Props) {
         contacts = [],
         toFetchContacts,
         setToFetchContacts,
-        handleAddContact,
         handleUpdateList,
-        errorMessage,
         // handleUpdateContact,
     } = props;
 
+    // function addContact () {
+    //     setIsModalVisible(true);
+    //     setTimeout(() => {  const selectBox = document.getElementById("search").options;
+    //         for(let i = selectBox.length; i !== -1; i--){
+    //             selectBox.remove(i);
+    //         }
+    //         console.log(selectBox.length)
+    //         var options = [];
+    //         for (let i = 0; i < usersArray.length; i++){
+    //             options.push({
+    //                 "text"     : usersArray[i].contactName,
+    //                 "value"    : `${i}`,
+    //             })
+    //         }
+    //         options.forEach(option =>
+    //             selectBox.add(
+    //                 new Option(option.text, option.value, option.selected)
+    //             )
+    //         );
+    //     }, 10);
+    // }
     const handleEditingContact = (contactName: string) => {
         setEditingContact(!editingContact);
         setSelectedContactName(contactName);
@@ -61,12 +79,10 @@ export default function ContactsTab(props: Props) {
             <CreateContact
                 handleUpdateList={handleUpdateList}
                 contacts={contacts}
-                errorMessage={errorMessage}
                 isModalVisible={isModalVisible}
                 setIsModalVisible={setIsModalVisible}
                 toFetchContacts={toFetchContacts}
                 setToFetchContacts={setToFetchContacts}
-                handleAddContact={handleAddContact}
             />
             <EditContact
                 contactName={selectedContactName}

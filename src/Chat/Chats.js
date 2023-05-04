@@ -3,8 +3,6 @@ import './Chats.scss'
 import MenuContent from './components/MenuContent'
 import ChatRoom from "./interfaces/ChatRoom";
 import {getRequest, postRequest} from "../constants";
-import {useNavigate} from "react-router-dom";
-// import {updateContactName} from "./interfaces/users";
 
 // interface Props {
 //     name: any;
@@ -13,15 +11,9 @@ import {useNavigate} from "react-router-dom";
 
 
 function Chats() {
-    const [selectedChat, setSelectedChat] = useState('Something went wrong');
-    const [openChat, setOpenChat] = useState(false);
+    const [selectedChat, setSelectedChat] = useState(null);
     const [conversations, setConversations] = useState();
     const [contacts, setContacts] = useState();
-    const [erMessage, setErMessage] = useState('')
-    let navigate = useNavigate();
-    const handleShowOpenChat = () => {
-        setOpenChat(!openChat);
-    };
     // useEffect(() => {
     //     if (selectedChat) {
     //         const updatedSelectedChat = conversations?.find(
@@ -34,10 +26,12 @@ function Chats() {
     // }, [conversations]);
     let [interval, setInterval1]= useState(undefined)
     const handleSelectChat = (chat: any) => {
-        setSelectedChat(chat);
-        getMessages(chat);
-        clearInterval(interval)
-        setInterval1(setInterval(() => getMessages(chat), 5000))
+        if(chat !== null) {
+            setSelectedChat(chat);
+            getMessages(chat);
+            clearInterval(interval)
+            setInterval1(setInterval(() => getMessages(chat), 5000))
+        }
     };
 
     function updateUserList() {
@@ -64,40 +58,6 @@ function Chats() {
     const handleUpdateList = async () => {
         updateUserList();
     }
-
-    const handleAddContact = async (contactName: string) => {
-        postRequest('/add_contact', {
-            "userName": contactName
-        })
-            .then(
-            response => {
-                    response.json().then(res => {
-                        if (response.ok) {
-                            console.log(res)
-                        }else {
-                            setErMessage(res.message);
-                            // console.log(res.message);
-                        }
-                    })
-            }).then(async (res) => {
-            await postRequest('/user_data').then(
-                response => {
-                    if (response.ok) {
-                        response.json().then(res => {
-                            setConversations(res.userChats)
-                            setContacts(res.userContacts)
-                            console.log(res)
-                        })
-                    } else {
-                        console.log("exception" + response.status);
-                    }
-                })
-                .catch((err) => console.error(err));
-        })
-            .catch(function (error) {                        // catch
-                console.log('Request failed', error);
-            })
-    };
 
     const [messages, setMessages] = useState([['senderName', 'TestName'], ['messageText', 'ee'], ['sendingTime', '2022-12-18T13:02:11.171478']]);
 
@@ -137,12 +97,10 @@ function Chats() {
                 <div className="app-container__menu">
                     <MenuContent
                         handleUpdateList={handleUpdateList}
-                        errorMessage={erMessage}
                         updateUserList={updateUserList}
                         conversations={conversations}
                         contacts={contacts}
                         handleSelectChat={handleSelectChat}
-                        handleAddContact={handleAddContact}
                         // handleUpdateContact={handleUpdateContact}
                     />
                 </div>
@@ -150,9 +108,9 @@ function Chats() {
                     {selectedChat ? (
                         <>
                             <ChatRoom
+                                setSelectedChat={setSelectedChat}
                                 messages={messages}
                                 selectedChat={selectedChat}
-                                // openChat={openChat}
                                 // contacts={contacts}
                                 handleUpdateList={handleUpdateList}
                                 handleSelectChat={handleSelectChat}

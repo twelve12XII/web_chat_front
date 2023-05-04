@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Modal, Input } from "antd";
+import {postRequest} from "../../constants";
 
 interface Contacts {
     contactName: string;
@@ -11,7 +12,6 @@ interface Props {
     setIsModalVisible: any;
     toFetchContacts: boolean;
     setToFetchContacts: any;
-    handleAddContact: any;
 }
 
 const initialContactState = {
@@ -23,10 +23,11 @@ export default function CreateContact(props: Props) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    const { errorMessage, isModalVisible, setIsModalVisible, handleAddContact } = props;
+    const { isModalVisible, setIsModalVisible, handleUpdateList } = props;
 
     const handleModalHide = () => {
         setIsModalVisible(false);
+        setLoading(false);
         setContactDetails(initialContactState);
         setError("");
     };
@@ -43,25 +44,50 @@ export default function CreateContact(props: Props) {
     const handleCreateContact = async () => {
         if (contactDetails.contactName) {
             setLoading(true);
-            handleAddContact(contactDetails.contactName)
-                .then((res: any) => {
-                    if(errorMessage === 'Something went wrong') {
-                        setLoading(false);
-                        setIsModalVisible(false);
-                        setContactDetails(initialContactState)
-                    }
-                    else {
-                        setError(errorMessage);
-                        setLoading(false);
-                    }
-                })
-                .catch((err: any) => {
-                    setLoading(false);
-                });
-        } else {
+            postRequest('/add_contact', {
+                "userName": contactDetails.contactName
+            })
+                .then(
+                    response => {
+                        response.json().then(res => {
+                            if (response.ok) {
+                                setLoading(false);
+                                setIsModalVisible(false);
+                                setContactDetails(initialContactState)
+                                console.log(res)
+                            } else {
+                                setError(res.message);
+                                setLoading(false);
+                                // console.log(res.message);
+                            }
+                        })
+                    }).then(handleUpdateList)
+        }
+        else {
             setError("All input fields must be filled");
         }
     };
+    // function addContact () {
+    //     handleModalShow();
+    //     setTimeout(() => {  const selectBox = document.getElementById("search").options;
+    //         for(let i = selectBox.length; i !== -1; i--){
+    //             selectBox.remove(i);
+    //         }
+    //         console.log(selectBox.length)
+    //         var options = [];
+    //         for (let i = 0; i < usersArray.length; i++){
+    //             options.push({
+    //                 "text"     : usersArray[i].contactName,
+    //                 "value"    : `${i}`,
+    //             })
+    //         }
+    //         options.forEach(option =>
+    //             selectBox.add(
+    //                 new Option(option.text, option.value, option.selected)
+    //             )
+    //         );
+    //     }, 10);
+    // }
 
     return (
         <>
@@ -73,7 +99,7 @@ export default function CreateContact(props: Props) {
                 okText="Add Contact"
                 confirmLoading={loading}
             >
-                Enter contact's name:
+                {/*<select id={"search"} name="search" className={"box"}></select>*/}
                 <Input
                     type="text"
                     name="contactName"

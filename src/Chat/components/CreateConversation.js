@@ -4,6 +4,7 @@ import {Button, Input, Modal} from "antd";
 import {useState} from "react";
 import {postRequest} from "../../constants";
 
+
 interface Props {
     creatingGroup: boolean;
     setCreatingGroup: boolean => void;
@@ -11,19 +12,17 @@ interface Props {
     handleShowCreateConversation: () => void;
     handleSelectChat: (chat?: any) => void;
 }
+
 export default function CreateConversation(props: Props) {
     const {
-        currentUserId,
-        handleSelectChat,
-        creatingGroup,
         updateUserChatList,
-        setCreatingGroup,
+        usersArray = [],
+        creatingGroup,
         handleShowCreateConversation,
+        setCreatingGroup,
     } = props;
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [addUserId, setAddUserId] = useState('');
     const [groupName, setGroupName] = useState('');
-    const [chatId, setChatId] = useState('');
     const handleModalHide = () => {
         setIsModalVisible(false);
     };
@@ -34,33 +33,52 @@ export default function CreateConversation(props: Props) {
     let classname = "create-conversation";
     if (!creatingGroup) classname += " hide";
     else classname.replace("hide", "");
-    const handleUserAddOnChange = (event) => {
-        setAddUserId(event.target.value);
-    };
     const handleGroupOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setGroupName(event.target.value);
     };
     const fetchGroupData = () => {
-        postRequest('/create_chat', {
-            "idOfRequested": addUserId,
+        var e = document.getElementById("search");
+        postRequest('/create_chat_with_contact', {
+            "userName": e.options[e.selectedIndex].text,
             "chatName": groupName
         }, true)
-        .then(
-            response => {
-                if(response.ok){
-                    response.json().then(res => {
-                        setChatId(res.id)
-                        console.log(res)
-                        setIsModalVisible(false)
-                        updateUserChatList()
-                        setCreatingGroup(false)
-                    })
-                }
-                else {
-                    console.log("exception" + response.status);
-                }
-            })
-    };
+            .then(
+                response => {
+                    if (response.ok) {
+                        response.json().then(res => {
+                            console.log(res)
+                            handleModalHide();
+                            updateUserChatList()
+                            setCreatingGroup(false)
+                        })
+                    } else {
+                        console.log("exception" + response.status);
+                    }
+                })
+    }
+    function createChat () {
+        handleModalShow();
+        setTimeout(() => {  const selectBox = document.getElementById("search").options;
+            for(let i = selectBox.length; i !== -1; i--){
+                selectBox.remove(i);
+            }
+            console.log(selectBox.length)
+            var options = [];
+            for (let i = 0; i < usersArray.length; i++){
+                options.push({
+                    "text"     : usersArray[i].contactName,
+                    "value"    : `${i}`,
+                })
+            }
+            options.forEach(option =>
+                selectBox.add(
+                    new Option(option.text, option.value, option.selected)
+                )
+            );
+            }, 10);
+    }
+
+
     return (
         <>
             <div className={classname}>
@@ -68,47 +86,28 @@ export default function CreateConversation(props: Props) {
                     <div>
                         <Button
                             onClick={handleShowCreateConversation}
-                            icon={<ArrowLeftOutlined style={{ fontSize: "18px" }} />}
+                            icon={<ArrowLeftOutlined style={{fontSize: "18px"}}/>}
                             size="large"
                             type="text"
                         />
-                        <div>Add conversation participants</div>
+                        <Button onClick={createChat}>Create chat</Button>
                     </div>
                 </header>
-                    <div className="create-group-section">
-                        <div>
-                            <Input
-                                type="text"
-                                placeholder="What's the user's name you want to add?"
-                                onChange={handleUserAddOnChange}
-                                style={{ marginBottom: 6 }}
-                            />
-                        </div>
-                        {addUserId !== '' && (
-                            <Button
-                                shape="circle"
-                                size="large"
-                                style={{ height: 48, width: 48 }}
-                                icon={<ArrowRightOutlined />}
-                                onClick={() => handleModalShow()}
-                            ></Button>
-                        )}
-                    </div>
+                <Modal title="New chat"
+                       open={isModalVisible}
+                       onCancel={handleModalHide}
+                       onOk={fetchGroupData}
+                       okText="Create chat"
+                >
+                    <select id={"search"} name="search" className={"box"}></select>
+                    <Input
+                        type="text"
+                        placeholder="What's the chat's name?"
+                        onChange={handleGroupOnChange}
+                        style={{marginBottom: 6}}
+                    />
+                </Modal>
             </div>
-            <Modal
-                title="New group"
-                open={isModalVisible}
-                onCancel={handleModalHide}
-                onOk={fetchGroupData}
-                okText="Create Conversation"
-            >
-                <Input
-                    type="text"
-                    placeholder="What's the group's name?"
-                    onChange={handleGroupOnChange}
-                    style={{ marginBottom: 6 }}
-                />
-            </Modal>
         </>
     );
 }
