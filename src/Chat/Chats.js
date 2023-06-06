@@ -14,16 +14,6 @@ function Chats() {
     const [selectedChat, setSelectedChat] = useState(null);
     const [conversations, setConversations] = useState();
     const [contacts, setContacts] = useState();
-    // useEffect(() => {
-    //     if (selectedChat) {
-    //         const updatedSelectedChat = conversations?.find(
-    //             (elem: any) => elem.chatId === selectedChat.chatId
-    //         );
-    //         if (updatedSelectedChat) {
-    //             setSelectedChat(updatedSelectedChat);
-    //         }
-    //     }
-    // }, [conversations]);
     let [interval, setInterval1]= useState(undefined)
     const handleSelectChat = (chat: any) => {
         if(chat !== null) {
@@ -31,6 +21,11 @@ function Chats() {
             getMessages(chat);
             clearInterval(interval)
             setInterval1(setInterval(() => getMessages(chat), 5000))
+        }
+        else {
+            setSelectedChat(null);
+            clearInterval(interval);
+            setInterval1(undefined);
         }
     };
 

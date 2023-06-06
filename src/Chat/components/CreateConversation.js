@@ -37,7 +37,7 @@ export default function CreateConversation(props: Props) {
         setGroupName(event.target.value);
     };
     const fetchGroupData = () => {
-        var e = document.getElementById("search");
+        var e = document.getElementById("contacts");
         postRequest('/create_chat_with_contact', {
             "userName": e.options[e.selectedIndex].text,
             "chatName": groupName
@@ -58,11 +58,10 @@ export default function CreateConversation(props: Props) {
     }
     function createChat () {
         handleModalShow();
-        setTimeout(() => {  const selectBox = document.getElementById("search").options;
+        setTimeout(() => {  const selectBox = document.getElementById("contacts").options;
             for(let i = selectBox.length; i !== -1; i--){
                 selectBox.remove(i);
             }
-            console.log(selectBox.length)
             var options = [];
             for (let i = 0; i < usersArray.length; i++){
                 options.push({
@@ -70,6 +69,7 @@ export default function CreateConversation(props: Props) {
                     "value"    : `${i}`,
                 })
             }
+            console.log(options)
             options.forEach(option =>
                 selectBox.add(
                     new Option(option.text, option.value, option.selected)
@@ -99,7 +99,7 @@ export default function CreateConversation(props: Props) {
                        onOk={fetchGroupData}
                        okText="Create chat"
                 >
-                    <select id={"search"} name="search" className={"box"}></select>
+                    <select id={"contacts"} name="contacts" className={"box"}></select>
                     <Input
                         type="text"
                         placeholder="What's the chat's name?"

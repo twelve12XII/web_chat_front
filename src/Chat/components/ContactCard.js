@@ -19,7 +19,6 @@ export default function ContactCard(props: Props) {
     };
 
     const handleModalShow = (name: string) => {
-        console.log(name);
         setContactName(name);
         setIsModalVisible(true);
     };
@@ -29,6 +28,7 @@ export default function ContactCard(props: Props) {
         }).then(
             handleUpdateList
         )
+        handleModalHide()
     }
 
     return (

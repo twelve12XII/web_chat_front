@@ -5,6 +5,7 @@ import EditContact from "./EditContact";
 import { ContactInterface } from "../interfaces/interfaces";
 import { Button } from "antd";
 import "./ContactsTab.scss";
+import {postRequest} from "../../constants";
 
 interface Props {
     contacts: ContactInterface[];
@@ -27,6 +28,20 @@ export default function ContactsTab(props: Props) {
         // handleUpdateContact,
     } = props;
 
+    const [allUsers, setAllUsers] = useState([]);
+    const usersList = () => {
+        setIsModalVisible(true);
+        postRequest('/search').then(
+            response => {
+                if (response.ok) {
+                    response.json().then(res => {
+                        setAllUsers(res.allUsers)
+                    })
+                } else {
+                    console.log("exception" + response.status);
+                }
+            });
+    }
     // function addContact () {
     //     setIsModalVisible(true);
     //     setTimeout(() => {  const selectBox = document.getElementById("search").options;
@@ -75,8 +90,9 @@ export default function ContactsTab(props: Props) {
                     );
                 })}
             </div>
-            <Button onClick={() => setIsModalVisible(true)}>New contact</Button>
+            <Button onClick={usersList}>New contact</Button>
             <CreateContact
+                usersArray = {allUsers}
                 handleUpdateList={handleUpdateList}
                 contacts={contacts}
                 isModalVisible={isModalVisible}

@@ -1,6 +1,5 @@
 import {Button, Input, Menu, Modal} from "antd";
 import React, {useEffect, useRef, useState} from "react";
-import {MoreOutlined} from "@ant-design/icons";
 import "./ChatRoom.scss"
 import ChatMessage from "./ChatMessage";
 import {postRequest} from "../../constants";
@@ -93,7 +92,7 @@ export default function ChatRoom(props: Props) {
                 response.json().then(res => {
                     if (response.ok) {
                         handleSelectChat(null)
-                        console.log(res)
+                        handleModalHide()
                     } else {
                         setErrorMessage(res.message);
                         console.log(res.message);
@@ -109,9 +108,19 @@ export default function ChatRoom(props: Props) {
         postRequest("/add_contact_to_chat", {
             "name": addUserName,
             "chatId": selectedChat.chatId
-        }).then(
-            handleUpdateList
-        )
+        }, true).then(
+            response => {
+                if (response.ok) {
+                    createMessage("I added " + addUserName + " to the chat.").then(() =>
+                        props.updateMessages());
+                    setMessageText("");
+                    dummy.current.scrollIntoView({behavior: "smooth"});
+                    handleModalHide();
+                    handleUpdateList();
+                } else {
+                    console.log("exception" + response.status);
+                }
+            })
     };
 
     async function fetchMessage(message) {
@@ -131,48 +140,19 @@ export default function ChatRoom(props: Props) {
             })
     }
 
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        event.preventDefault();
+        if (messageText) {
+            createMessage(messageText).then(() =>
+                props.updateMessages());
+            setMessageText("");
+            dummy.current.scrollIntoView({behavior: "smooth"});
+        }
+    }
+
     const createMessage = async (text) => {
         await fetchMessage(text)
     }
-
-    // const menu = (
-    //     // <Form>
-    //     //     <FormGroup controlId="selection">
-    //     //
-    //     //         <Dropdown>
-    //     //             <Dropdown.Toggle variant="success" id="dropdown-basic">
-    //     //                 Menu
-    //     //             </Dropdown.Toggle>
-    //     //
-    //     //             <Dropdown.Menu>
-    //     //                 <Dropdown.Item key="1" onClick={() => removeChat()}>Delete chat</Dropdown.Item>
-    //     //                 {/*<Dropdown.Item key="2" onClick={() => deleteAccount()}>Delete account</Dropdown.Item>*/}
-    //     //                 {/*<Dropdown.Item>xyz</Dropdown.Item>*/}
-    //     //             </Dropdown.Menu>
-    //     //         </Dropdown>
-    //     //     </FormGroup>
-    //     // </Form>
-    //     // <Menu>
-    //     //     <Menu.Item
-    //     //         key="1"
-    //     //         onClick={() => {
-    //     //             // handleChangeNameDialog();
-    //     //         }}
-    //     //     >
-    //     //         Edit group name
-    //     //     </Menu.Item>
-    //     //     <Menu.Item
-    //     //         key="4"
-    //     //         onClick={() => {
-    //     //             // deleteGroup(selectedChat.id);
-    //     //             handleSelectChat(null);
-    //     //         }}
-    //     //     >
-    //     //         Exit group
-    //     //     </Menu.Item>
-    //     // </Menu>
-    // );
-
 
     return (
         <>
@@ -196,7 +176,8 @@ export default function ChatRoom(props: Props) {
                             <Dropdown.Menu id="myDropdown" className="dropdown-content">
                                 <Dropdown.Item key="1" onClick={() => handleModalShow("1")}>Delete chat</Dropdown.Item>
                                 <Dropdown.Item key="2" onClick={() => handleModalShow("2")}>Add new user</Dropdown.Item>
-                                {/*<Dropdown.Item>xyz</Dropdown.Item>*/}
+                                <Dropdown.Item key="3" onClick={() => console.log('icon')}>Change chat
+                                    icon</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
                         <Modal
@@ -250,6 +231,7 @@ export default function ChatRoom(props: Props) {
                                 value={messageText}
                                 placeholder="Type a message"
                                 onChange={handleMessageOnChange}
+                                onPressEnter={handleKeyDown}
                             />
                             <Button onClick={handleCreateMessage}>Send message</Button>
                         </form>

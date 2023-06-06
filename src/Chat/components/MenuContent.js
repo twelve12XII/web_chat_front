@@ -1,5 +1,5 @@
-import {Button, Input, Menu, Modal, Tabs} from "antd";
-import {Form, FormGroup, Dropdown} from "react-bootstrap";
+import {Button, Modal, Tabs} from "antd";
+import {Dropdown} from "react-bootstrap";
 import './MenuContent.scss'
 import ConversationsTab from './ConversationsTab'
 import {useState} from "react";
@@ -7,7 +7,9 @@ import {getUsername} from "../../Auth";
 import {useNavigate} from "react-router-dom";
 import ContactsTab from "./ContactsTab";
 import "../interfaces/DropDownButton.scss"
-import {getRequest, postRequest} from "../../constants";
+import "../interfaces/image.scss"
+import {postRequest} from "../../constants";
+import UploadProfileImage from "./UploadProfileImage";
 
 interface Props {
     conversations: any;
@@ -21,11 +23,7 @@ export default function MenuContent(props: Props) {
         handleSelectChat,
         updateUserList,
         contacts,
-        handleUpdateList,
-        // handleDeleteAccount,
-        // handleRemoveContact,
-        // handleRemoveChat,
-        // handleUpdateContact,
+        handleUpdateList
     } = props;
     const [isModalVisible, setIsModalVisible] = useState(false);
     const handleModalHide = () => {
@@ -36,14 +34,16 @@ export default function MenuContent(props: Props) {
         setIsModalVisible(true);
     };
     const [loading, setLoading] = useState(false);
+    const [changingProfileImage, setChangingProfileImage] = useState(false);
+    const [profileImage, setProfileImage] = useState('');
     const [toFetchContacts, setToFetchContacts] = useState(false);
     const items = [
         {
             label: 'Conversations', key: '1', children:
                 <ConversationsTab
                     updateUserList={updateUserList}
+                    contacts={contacts}
                     conversations={conversations}
-                    // handleRemoveChat={handleRemoveChat}
                     handleSelectChat={handleSelectChat}
                 />
         }, // remember to pass the key prop
@@ -54,7 +54,6 @@ export default function MenuContent(props: Props) {
                     handleUpdateList={handleUpdateList}
                     setToFetchContacts={setToFetchContacts}
                     toFetchContacts={toFetchContacts}
-                    // handleRemoveContact={handleRemoveContact}
                     // handleUpdateContact={handleUpdateContact}
                 />
         },
@@ -65,6 +64,17 @@ export default function MenuContent(props: Props) {
     function deleteAccount() {
         postRequest('/delete_account').then(navigate("/"));
     }
+    const handleChangeProfileImage = () => {
+        setChangingProfileImage(!changingProfileImage);
+    };
+    const handleUpdateProfileImage = (updatedImage: string) => {
+        setProfileImage(updatedImage);
+    };
+
+    // const handleRemoveProfileImage = () => {
+    //     setProfileImage(null);
+    //     removeProfileImage();
+    // };
 
     return (
         <>
@@ -83,11 +93,12 @@ export default function MenuContent(props: Props) {
                     <header className={"header"}>
                         <div className={"key"} style={{display: "flex", alignItems: "center"}}>
                             <Button
-                                // onClick={}
+                                // onClick={iconMenu}
                                 shape="circle"
                                 style={{
                                     height: "40px",
                                     width: "40px",
+                                    backgroundImage: `url(${profileImage})`,
                                     backgroundSize: "cover",
                                     backgroundPosition: "center",
                                 }}
@@ -105,6 +116,7 @@ export default function MenuContent(props: Props) {
                                 <Dropdown.Item key="1" onClick={() => navigate('/')}>Logout</Dropdown.Item>
                                 <Dropdown.Item key="2" onClick={() => handleModalShow()}>Delete
                                     account</Dropdown.Item>
+                                <Dropdown.Item key="3" onClick={handleChangeProfileImage}>Change profile image</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
                         <Modal
@@ -122,5 +134,10 @@ export default function MenuContent(props: Props) {
                     </div>
                 </div>
             )}
+            <UploadProfileImage
+                isVisible={changingProfileImage}
+                handleChangeProfileImage={handleChangeProfileImage}
+                handleUpdateProfileImage={handleUpdateProfileImage}
+            />
         </>);
 }

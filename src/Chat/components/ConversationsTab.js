@@ -14,24 +14,25 @@ interface Props {
 
 export default function ConversationsTab(props: Props) {
     const [creatingGroup, setCreatingGroup] = useState(false);
-    const {conversations, handleSelectChat, updateUserList} = props;
+    const {contacts = [], conversations, handleSelectChat, updateUserList} = props;
     const handleShowCreateConversation = () => {
         setCreatingGroup(!creatingGroup);
     };
-    const [allUsers, setAllUsers] = useState([]);
-    const usersList = () => {
-        postRequest('/search').then(
-            response => {
-                if (response.ok) {
-                    response.json().then(res => {
-                        setAllUsers(res.allUsers)
-                    })
-                } else {
-                    console.log("exception" + response.status);
-                }
-            });
-        handleShowCreateConversation();
-    }
+
+    // const [allUsers, setAllUsers] = useState([]);
+    // const usersList = () => {
+    //     postRequest('/search').then(
+    //         response => {
+    //             if (response.ok) {
+    //                 response.json().then(res => {
+    //                     setAllUsers(res.allUsers)
+    //                 })
+    //             } else {
+    //                 console.log("exception" + response.status);
+    //             }
+    //         });
+    //     handleShowCreateConversation();
+    // }
     return (
         <>
             <div className="conversations-tab">
@@ -47,10 +48,10 @@ export default function ConversationsTab(props: Props) {
                         );
                     })}
                 </div>
-                <Button onClick={usersList}>New conversation</Button>
+                <Button onClick={handleShowCreateConversation}>New conversation</Button>
             </div>
             <CreateConversation
-                usersArray={allUsers}
+                usersArray={contacts}
                 updateUserChatList={updateUserList}
                 creatingGroup={creatingGroup}
                 setCreatingGroup={setCreatingGroup}
