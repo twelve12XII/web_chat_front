@@ -116,7 +116,7 @@ export default function MenuContent(props: Props) {
                                 <Dropdown.Item key="1" onClick={() => navigate('/')}>Logout</Dropdown.Item>
                                 <Dropdown.Item key="2" onClick={() => handleModalShow()}>Delete
                                     account</Dropdown.Item>
-                                <Dropdown.Item key="3" onClick={handleChangeProfileImage}>Change profile image</Dropdown.Item>
+                                {/*<Dropdown.Item key="3" onClick={handleChangeProfileImage}>Change profile image</Dropdown.Item>*/}
                             </Dropdown.Menu>
                         </Dropdown>
                         <Modal

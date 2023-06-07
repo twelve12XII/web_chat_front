@@ -107,6 +107,7 @@ export default function CreateContact(props: Props) {
                 <Button onClick={addContact}>Select from all users</Button>
                 <Input
                     type="text"
+                    placeholder="What's the user name?"
                     name="contactName"
                     value={contactDetails.contactName}
                     onChange={(e) => handleOnChange(e)}

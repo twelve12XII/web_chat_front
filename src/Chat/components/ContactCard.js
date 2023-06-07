@@ -14,12 +14,14 @@ export default function ContactCard(props: Props) {
     const { contact, onClick, handleEditingContact, handleUpdateList } = props;
     const[contactName, setContactName] = useState();
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [modalText, setModalText] = useState(``);
     const handleModalHide = () => {
         setIsModalVisible(false);
     };
 
     const handleModalShow = (name: string) => {
         setContactName(name);
+        setModalText(`Contact ${name} will be deleted`)
         setIsModalVisible(true);
     };
     const handleDeleteContact = () => {
@@ -46,14 +48,14 @@ export default function ContactCard(props: Props) {
                 </div>
                 <div className="contact-card__name">
                     <span style={{ marginRight: "auto" }}>{contact.contactName}</span>
-                    <Button
-                        type="text"
-                        shape="circle"
-                        icon={<EditOutlined style={{ color: "#555" }} />}
-                        onClick={() =>
-                            handleEditingContact(contact.contactName, contact.uid)
-                        }
-                    />
+                    {/*<Button*/}
+                    {/*    type="text"*/}
+                    {/*    shape="circle"*/}
+                    {/*    icon={<EditOutlined style={{ color: "#555" }} />}*/}
+                    {/*    onClick={() =>*/}
+                    {/*        handleEditingContact(contact.contactName, contact.uid)*/}
+                    {/*    }*/}
+                    {/*/>*/}
                     <Button
                         type="text"
                         shape="circle"
@@ -61,7 +63,7 @@ export default function ContactCard(props: Props) {
                         onClick={() => handleModalShow(contact.contactName)}
                     />
                     <Modal
-                        title="Contact will be deleted"
+                        title={modalText}
                         open={isModalVisible}
                         onCancel={handleModalHide}
                         onOk={handleDeleteContact}

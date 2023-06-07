@@ -106,7 +106,7 @@ function Chats() {
                                 setSelectedChat={setSelectedChat}
                                 messages={messages}
                                 selectedChat={selectedChat}
-                                // contacts={contacts}
+                                contacts={contacts}
                                 handleUpdateList={handleUpdateList}
                                 handleSelectChat={handleSelectChat}
                                 updateMessages={getMessages}

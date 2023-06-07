@@ -14,12 +14,16 @@ interface Props {
     updateMessages: () => void;
 }
 
-export default function ChatRoom(props: Props) {
+export default function ChatRoom(props: Props){
     const [messageText, setMessageText] = useState("");
-    const {handleUpdateList, selectedChat, handleSelectChat, /*contacts,*/ messages, setSelectedChat} = props;
-    const [groupName, setGroupName] = useState("");
-    const [loading, setLoading] = useState(false);
+    const {handleUpdateList, selectedChat, handleSelectChat, messages, contacts} = props;
+    // const [groupName, setGroupName] = useState("");
+    // const [loading, setLoading] = useState(false);
+    const [chatCreator, setChatCreator] = useState("");
+    const [members, setMembers] = useState([]);
+    const [numMembers, setNumMembers] = useState(0);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isChatInfoVisible, setChatInfoVisible] = useState(false);
     const [isModalVisibleDeleteChat, setIsModalVisibleDeleteChat] = useState(false);
     const dummy = useRef(null);
     const [addUserName, setAddUserName] = useState('');
@@ -36,6 +40,7 @@ export default function ChatRoom(props: Props) {
             default:
                 setIsModalVisibleDeleteChat(false);
                 setIsModalVisible(false);
+                setChatInfoVisible(false);
                 break;
         }
     };
@@ -47,7 +52,29 @@ export default function ChatRoom(props: Props) {
                 setIsModalVisibleDeleteChat(true);
                 break;
             case "2":
+                setTimeout(() => {  const selectBox = document.getElementById("members").options;
+                    for(let i = selectBox.length; i !== -1; i--){
+                        selectBox.remove(i);
+                    }
+                    var options = [];
+                    for (let i = 0; i < contacts.length; i++){
+                        options.push({
+                            "text"     : contacts[i].contactName,
+                            "value"    : `${i}`,
+                        })
+                    }
+                    console.log(options)
+                    options.forEach(option =>
+                        selectBox.add(
+                            new Option(option.text, option.value, option.selected)
+                        )
+                    );
+                }, 10);
                 setIsModalVisible(true);
+                break;
+            case "4":
+                handleChatInfo();
+                setChatInfoVisible(true);
                 break;
         }
     };
@@ -105,13 +132,14 @@ export default function ChatRoom(props: Props) {
     }
 
     const handleGroupOnChange = () => {
+        let e = document.getElementById("members");
         postRequest("/add_contact_to_chat", {
-            "name": addUserName,
+            "name": e.options[e.selectedIndex].text,
             "chatId": selectedChat.chatId
         }, true).then(
             response => {
                 if (response.ok) {
-                    createMessage("I added " + addUserName + " to the chat.").then(() =>
+                    createMessage("I added " + e.options[e.selectedIndex].text + " to the chat.").then(() =>
                         props.updateMessages());
                     setMessageText("");
                     dummy.current.scrollIntoView({behavior: "smooth"});
@@ -120,6 +148,19 @@ export default function ChatRoom(props: Props) {
                 } else {
                     console.log("exception" + response.status);
                 }
+            })
+    };
+
+    const handleChatInfo = () => {
+        postRequest("/chat_info", {
+            "chatId": selectedChat.chatId
+        }, true).then(
+            response => {
+                response.json().then(res => {
+                    setChatCreator(res.creator);
+                    setMembers(res.members);
+                    setNumMembers(res.numberOfMembers);
+                })
             })
     };
 
@@ -174,12 +215,27 @@ export default function ChatRoom(props: Props) {
                                 Chat menu
                             </Dropdown.Toggle>
                             <Dropdown.Menu id="myDropdown" className="dropdown-content">
-                                <Dropdown.Item key="1" onClick={() => handleModalShow("1")}>Delete chat</Dropdown.Item>
                                 <Dropdown.Item key="2" onClick={() => handleModalShow("2")}>Add new user</Dropdown.Item>
-                                <Dropdown.Item key="3" onClick={() => console.log('icon')}>Change chat
-                                    icon</Dropdown.Item>
+                                {/*<Dropdown.Item key="3" onClick={() => console.log('icon')}>Change chat*/}
+                                    {/*icon</Dropdown.Item>*/}
+                                <Dropdown.Item key="4" onClick={() => handleModalShow("4")}>Chat Info</Dropdown.Item>
+                                <Dropdown.Item key="1" onClick={() => handleModalShow("1")}>Delete chat</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
+                        <Modal
+                            id="chat-info"
+                            title="Chat Info"
+                            open={isChatInfoVisible}
+                            onCancel={handleModalHide}
+                            onOk={handleModalHide}
+                            // okText="Delete chat"
+                        >
+                            <b>Creator:</b> {chatCreator} <br/>
+                            <b>Members:</b> {members?.map((member, index) => {
+                                return <div>{member}</div>
+                        })}
+                            <b>Number of members:</b> {numMembers}
+                        </Modal>
                         <Modal
                             title="Add contact to the chat"
                             open={isModalVisible}
@@ -187,12 +243,7 @@ export default function ChatRoom(props: Props) {
                             onOk={handleGroupOnChange}
                             okText="Add contact"
                         >
-                            <Input
-                                type="text"
-                                placeholder="What's the user name?"
-                                onChange={(event) => setAddUserName(event.target.value)}
-                                style={{marginBottom: 6}}
-                            />
+                            <select id={"members"} name="members" className={"box"}></select>
                         </Modal>
                         <Modal
                             title="Delete this chat?"
