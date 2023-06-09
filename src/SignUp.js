@@ -7,41 +7,43 @@ import {setAuthHeader} from "./Auth";
 
 function SignUp() {
     let navigate = useNavigate();
-    const [error, setError] = useState(false);
-    const [erMessage, setErMessage] = useState(' Something went wrong')
+    const [erMessage, setErMessage] = useState('')
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
 
     function signUp() {
         const fetchData = () => {
-            postRequest(
-                '/sign_up',
-                {
-                    "userName": name,
-                    "password": password
-                },
-                false
-            ).then(
-                response => {
-                    try {
-                        setAuthHeader(name, password)
-                        response.json().then(res => {
-                            console.log(res)
-                            if(response.ok){
-                                navigate(
-                                    '/chats',
-                                    {state: {name: res.userName, userId: res.id}}
-                                );
-                            }
-                            else{
-                                // console.log(res.message);
-                                setErMessage(res.message);
-                                setError(true);
-                            }
-                        }).catch(error => setError(true))
-                    } catch (error) {
-                    }
-                })
+            setErMessage("");
+            if (name.length === 0 || password.length === 0) {
+                setErMessage("All input fields must be filled.")
+            } else {
+                postRequest(
+                    '/sign_up',
+                    {
+                        "userName": name,
+                        "password": password
+                    },
+                    false
+                ).then(
+                    response => {
+                        try {
+                            setAuthHeader(name, password)
+                            response.json().then(res => {
+                                console.log(res)
+                                if (response.ok) {
+                                    navigate(
+                                        '/chats',
+                                        {state: {name: res.userName, userId: res.id}}
+                                    );
+                                } else {
+                                    // console.log(res.message);
+                                    setErMessage(res.message);
+                                }
+                            })
+                        } catch (error) {
+                        }
+                    })
+            }
 
         };
 
@@ -72,6 +74,9 @@ function SignUp() {
                         value={password}
                         onChange={(event) => setPassword(event.target.value)}
                     />
+                    {erMessage.length > 0 && (
+                        <div style={{color: "red", fontSize: "0.75rem"}}>{erMessage}</div>
+                    )}
                     <Button
                         onClick={() => {
                             signUp();
@@ -79,9 +84,6 @@ function SignUp() {
                     >
                         Sign up
                     </Button>
-                    {error && (
-                        <p><span style={{ color: "red", fontSize: "0.75rem" }}>{erMessage}</span></p>
-                    )}
                     <div className="login-account">
                         Or, <Link to="/">Log In</Link>
                     </div>

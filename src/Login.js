@@ -10,15 +10,17 @@ function Login() {
     const [password, setPassword] = useState('');
     const [userName, setUserName] = useState({userName: 'TEST2'})
     const [userId, setUserId] = useState({userId: -2})
+    const [error, setError] = useState("");
     const handleSetName = (event) => {
         setUserName(event);
     };
     const handleSetId = (event) => {
         setUserId(event);
     };
-    function getMessage()
-    {
+
+    function getMessage() {
         const fetchData = () => {
+            setError("");
             setAuthHeader(name, password);
             postRequest('/user_data').then(
                 response => {
@@ -26,9 +28,11 @@ function Login() {
                         response.json().then(res => {
                             navigate(
                                 '/chats',
-                                { state: { name: res.userName, userId:res.id } }
+                                {state: {name: res.userName, userId: res.id}}
                             );
                         })
+                    } else if (response.status === 401) {
+                        setError("Invalid login or password.")
                     } else {
                         console.log("exception" + response.status);
                     }
@@ -37,6 +41,7 @@ function Login() {
         };
         fetchData();
     }
+
     let navigate = useNavigate();
     return (
         <div className="sign-in">
@@ -60,6 +65,9 @@ function Login() {
                         value={password}
                         onChange={(event) => setPassword(event.target.value)}
                     />
+                    {error.length > 1 && (
+                        <div style={{color: "red", fontSize: "0.75rem"}}>{error}</div>
+                    )}
                     <Button
                         onClick={() => {
                             getMessage();
@@ -75,4 +83,5 @@ function Login() {
         </div>
     );
 }
+
 export default Login;

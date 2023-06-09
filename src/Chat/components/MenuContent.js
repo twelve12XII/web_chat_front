@@ -3,7 +3,7 @@ import {Dropdown} from "react-bootstrap";
 import './MenuContent.scss'
 import ConversationsTab from './ConversationsTab'
 import {useState} from "react";
-import {getUsername} from "../../Auth";
+import {getUsername, setAuthHeader} from "../../Auth";
 import {useNavigate} from "react-router-dom";
 import ContactsTab from "./ContactsTab";
 import "../interfaces/DropDownButton.scss"
@@ -113,7 +113,7 @@ export default function MenuContent(props: Props) {
                                 Menu
                             </Dropdown.Toggle>
                             <Dropdown.Menu id="myDropdown" className="dropdown-content">
-                                <Dropdown.Item key="1" onClick={() => navigate('/')}>Logout</Dropdown.Item>
+                                <Dropdown.Item key="1" onClick={() => {navigate('/'); window.location.reload()} }>Logout</Dropdown.Item>
                                 <Dropdown.Item key="2" onClick={() => handleModalShow()}>Delete
                                     account</Dropdown.Item>
                                 {/*<Dropdown.Item key="3" onClick={handleChangeProfileImage}>Change profile image</Dropdown.Item>*/}

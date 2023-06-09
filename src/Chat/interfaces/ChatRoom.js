@@ -14,11 +14,9 @@ interface Props {
     updateMessages: () => void;
 }
 
-export default function ChatRoom(props: Props){
+export default function ChatRoom(props: Props) {
     const [messageText, setMessageText] = useState("");
     const {handleUpdateList, selectedChat, handleSelectChat, messages, contacts} = props;
-    // const [groupName, setGroupName] = useState("");
-    // const [loading, setLoading] = useState(false);
     const [chatCreator, setChatCreator] = useState("");
     const [members, setMembers] = useState([]);
     const [numMembers, setNumMembers] = useState(0);
@@ -26,7 +24,6 @@ export default function ChatRoom(props: Props){
     const [isChatInfoVisible, setChatInfoVisible] = useState(false);
     const [isModalVisibleDeleteChat, setIsModalVisibleDeleteChat] = useState(false);
     const dummy = useRef(null);
-    const [addUserName, setAddUserName] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const handleModalHide = (key: string) => {
         setErrorMessage("");
@@ -52,15 +49,16 @@ export default function ChatRoom(props: Props){
                 setIsModalVisibleDeleteChat(true);
                 break;
             case "2":
-                setTimeout(() => {  const selectBox = document.getElementById("members").options;
-                    for(let i = selectBox.length; i !== -1; i--){
+                setTimeout(() => {
+                    const selectBox = document.getElementById("members").options;
+                    for (let i = selectBox.length; i !== -1; i--) {
                         selectBox.remove(i);
                     }
                     var options = [];
-                    for (let i = 0; i < contacts.length; i++){
+                    for (let i = 0; i < contacts.length; i++) {
                         options.push({
-                            "text"     : contacts[i].contactName,
-                            "value"    : `${i}`,
+                            "text": contacts[i].contactName,
+                            "value": `${i}`,
                         })
                     }
                     console.log(options)
@@ -138,16 +136,19 @@ export default function ChatRoom(props: Props){
             "chatId": selectedChat.chatId
         }, true).then(
             response => {
-                if (response.ok) {
-                    createMessage("I added " + e.options[e.selectedIndex].text + " to the chat.").then(() =>
-                        props.updateMessages());
-                    setMessageText("");
-                    dummy.current.scrollIntoView({behavior: "smooth"});
-                    handleModalHide();
-                    handleUpdateList();
-                } else {
-                    console.log("exception" + response.status);
-                }
+                response.json().then(res => {
+                    if (response.ok) {
+                        createMessage("I added " + e.options[e.selectedIndex].text + " to the chat.").then(() =>
+                            props.updateMessages());
+                        setMessageText("");
+                        dummy.current.scrollIntoView({behavior: "smooth"});
+                        handleModalHide();
+                        handleUpdateList();
+                    } else {
+                        setErrorMessage(res.message);
+                        console.log("exception" + response.status);
+                    }
+                })
             })
     };
 
@@ -217,7 +218,7 @@ export default function ChatRoom(props: Props){
                             <Dropdown.Menu id="myDropdown" className="dropdown-content">
                                 <Dropdown.Item key="2" onClick={() => handleModalShow("2")}>Add new user</Dropdown.Item>
                                 {/*<Dropdown.Item key="3" onClick={() => console.log('icon')}>Change chat*/}
-                                    {/*icon</Dropdown.Item>*/}
+                                {/*icon</Dropdown.Item>*/}
                                 <Dropdown.Item key="4" onClick={() => handleModalShow("4")}>Chat Info</Dropdown.Item>
                                 <Dropdown.Item key="1" onClick={() => handleModalShow("1")}>Delete chat</Dropdown.Item>
                             </Dropdown.Menu>
@@ -232,7 +233,7 @@ export default function ChatRoom(props: Props){
                         >
                             <b>Creator:</b> {chatCreator} <br/>
                             <b>Members:</b> {members?.map((member, index) => {
-                                return <div>{member}</div>
+                            return <div>{member}</div>
                         })}
                             <b>Number of members:</b> {numMembers}
                         </Modal>
@@ -244,6 +245,9 @@ export default function ChatRoom(props: Props){
                             okText="Add contact"
                         >
                             <select id={"members"} name="members" className={"box"}></select>
+                            {errorMessage.length > 1 && (
+                                <div style={{color: "red", fontSize: "0.75rem"}}>{errorMessage}</div>
+                            )}
                         </Modal>
                         <Modal
                             title="Delete this chat?"
